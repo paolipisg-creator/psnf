@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PSNF · Evaluación Tiroides</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #E8541A;
+    --orange-light: #F06030;
+    --orange-pale: rgba(232,84,26,0.12);
+    --black: #3D3D3D;
+    --gray-dark: #5A5A5A;
+    --gray-mid: #AAAAAA;
+    --gray-light: #6B6B6B;
+    --gray-section: #7A7A7A;
+    --white: #FFFFFF;
+    --bg-main: #6B6B6B;
+    --bg-hero: #3D3D3D;
+    --red: #D32F2F;
+    --amber: #F57C00;
+    --yellow: #F9A825;
+    --green: #2E7D32;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-main);
+    color: var(--white);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--black);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-badge {
+    width: 44px;
+    height: 44px;
+    background: var(--orange);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+    color: white;
+    letter-spacing: 1px;
+  }
+
+  .logo-text {
+    color: white;
+  }
+
+  .logo-text strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .logo-text span {
+    font-size: 11px;
+    color: var(--gray-mid);
+    font-weight: 300;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .header-tag {
+    background: var(--orange);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* HERO */
+  .hero {
+    background: var(--bg-hero);
+    color: white;
+    padding: 80px 40px 100px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(232,84,26,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(36px, 5vw, 58px);
+    line-height: 1.1;
+    margin-bottom: 20px;
+    color: white;
+  }
+
+  .hero h1 em {
+    color: var(--orange);
+    font-style: italic;
+  }
+
+  .hero p {
+    font-size: 17px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.65);
+    max-width: 560px;
+    margin-bottom: 36px;
+  }
+
+  .levels-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .level-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+  }
+
+  .level-chip .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  /* PROGRESS */
+  .progress-wrap {
+    background: #5A5A5A;
+    padding: 20px 40px;
+    border-bottom: 1px solid #4A4A4A;
+    position: sticky;
+    top: 84px;
+    z-index: 90;
+  }
+
+  .progress-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  .progress-bar-outer {
+    flex: 1;
+    height: 6px;
+    background: #4A4A4A;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-bar-inner {
+    height: 100%;
+    background: var(--orange);
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  .progress-pct {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--orange);
+    min-width: 36px;
+    text-align: right;
+  }
+
+  /* MAIN FORM */
+  .main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+  }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 56px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid rgba(255,255,255,0.15);
+  }
+
+  .section-num {
+    width: 36px;
+    height: 36px;
+    background: var(--orange);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--white);
+  }
+
+  .section-optional {
+    margin-left: auto;
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.1);
+    padding: 4px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+  }
+
+  /* FIELDS */
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .field-grid.cols-3 {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .field-grid.cols-1 {
+    grid-template-columns: 1fr;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .field.full {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.8);
+  }
+
+  input[type="text"],
+  input[type="number"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--white);
+    background: rgba(0,0,0,0.2);
+    transition: border-color 0.2s;
+    outline: none;
+    appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 3px rgba(232,84,26,0.2);
+  }
+  
+  select option {
+    background: #5A5A5A;
+    color: white;
+  }
+
+  /* CHECKBOX GROUP */
+  .check-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .check-group.inline {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 10px 14px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    transition: all 0.2s;
+    user-select: none;
+    font-size: 14px;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .check-item:hover {
+    border-color: var(--orange);
+    background: rgba(232,84,26,0.15);
+  }
+
+  .check-item input[type="checkbox"] {
+    display: none;
+  }
+
+  .check-box {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .check-item input:checked ~ .check-box {
+    background: var(--orange);
+    border-color: var(--orange);
+  }
+
+  .check-item input:checked ~ .check-box::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .check-item:has(input:checked) {
+    border-color: var(--orange);
+    background: rgba(232,84,26,0.2);
+    color: var(--white);
+  }
+
+  /* inline chips */
+  .check-group.inline .check-item {
+    padding: 8px 14px;
+    border-radius: 20px;
+  }
+
+  /* SUBLABEL */
+  .sublabel {
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 10px;
+    margin-top: -4px;
+  }
+
+  /* INSIGHT BOX */
+  .insight {
+    background: rgba(232,84,26,0.15);
+    border-left: 4px solid var(--orange);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  .insight strong { color: var(--orange); }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: rgba(255,255,255,0.15);
+    margin: 24px 0;
+  }
+
+  /* SUBMIT */
+  .submit-section {
+    background: var(--black);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .submit-section h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: white;
+    margin-bottom: 10px;
+  }
+
+  .submit-section p {
+    color: rgba(255,255,255,0.55);
+    font-size: 14px;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  .btn-submit {
+    background: var(--orange);
+    color: white;
+    border: none;
+    padding: 16px 48px;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-submit:hover {
+    background: var(--orange-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(232,84,26,0.35);
+  }
+
+  /* RESULT PANEL */
+  #result-panel {
+    display: none;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+  }
+
+  .result-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .result-header .badge {
+    display: inline-block;
+    background: rgba(232,84,26,0.2);
+    color: var(--orange);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .result-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    margin-bottom: 10px;
+    color: white;
+  }
+
+  .result-header p {
+    color: rgba(255,255,255,0.6);
+    font-size: 15px;
+  }
+
+  /* ALERT CARDS */
+  .alert-card {
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .alert-card.red { background: #FFF5F5; border: 1.5px solid #FFCDD2; }
+  .alert-card.orange { background: #FFF8F0; border: 1.5px solid #FFE0B2; }
+  .alert-card.yellow { background: #FFFDE7; border: 1.5px solid #FFF9C4; }
+  .alert-card.green { background: #F1F8E9; border: 1.5px solid #DCEDC8; }
+
+  .alert-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .alert-content h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--black);
+  }
+
+  .alert-card.red h4 { color: #C62828; }
+  .alert-card.orange h4 { color: #E65100; }
+  .alert-card.yellow h4 { color: #F57F17; }
+  .alert-card.green h4 { color: #1B5E20; }
+
+  .alert-content p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--gray-dark);
+  }
+
+  .result-section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    margin-bottom: 20px;
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+  }
+
+  .result-section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.2);
+  }
+
+  /* MENU */
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+  }
+
+  .menu-day {
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 12px 8px;
+    text-align: center;
+  }
+
+  .menu-day .day-name {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--orange);
+    margin-bottom: 10px;
+  }
+
+  .menu-meal {
+    font-size: 11px;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 6px;
+    line-height: 1.4;
+    text-align: left;
+  }
+
+  .menu-meal strong {
+    display: block;
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+
+  /* DOWNLOAD BTN */
+  .download-bar {
+    background: rgba(232,84,26,0.15);
+    border-radius: 12px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 48px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .download-bar p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .download-bar strong {
+    display: block;
+    font-size: 16px;
+    color: white;
+    margin-bottom: 4px;
+  }
+
+  .btn-download {
+    background: var(--black);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-download:hover {
+    background: var(--orange);
+    transform: translateY(-2px);
+  }
+
+  /* FOOTER */
+  footer {
+    background: #3D3D3D;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    padding: 32px 40px;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+
+  footer strong { color: var(--orange); }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    header { padding: 16px 20px; }
+    .hero { padding: 50px 20px 70px; }
+    .main, #result-panel { padding: 40px 20px 80px; }
+    .progress-wrap { padding: 16px 20px; }
+    .field-grid { grid-template-columns: 1fr; }
+    .field-grid.cols-3 { grid-template-columns: 1fr 1fr; }
+    .menu-grid { grid-template-columns: repeat(4, 1fr); }
+    .submit-section { padding: 28px 20px; }
+    .download-bar { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <img src="data:image/jpeg;base64,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" style="width:44px;height:44px;border-radius:10px;object-fit:cover;">
+    <div class="logo-text">
+      <strong>Paola Sánchez</strong>
+      <span>Nutrición &amp; Farmacia</span>
+    </div>
+  </div>
+  <a href="https://instagram.com/paola_nutricion_farmacia" target="_blank" style="display:flex;align-items:center;gap:8px;text-decoration:none;"><div class="header-tag">📷 @paola_nutricion_farmacia</div></a>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Evaluación personalizada</div>
+    <h1>Tu tiroides merece<br><em>atención a medida</em></h1>
+    <p>Completa el cuestionario y recibe un informe personalizado con alertas sobre interacciones, consejos clínicos y, si completas todo el formulario, un plan de menú semanal adaptado a tu situación.</p>
+    <div class="levels-bar">
+      <div class="level-chip"><span class="dot" style="background:#E8541A"></span>Bloques básicos → Informe + alertas</div>
+      <div class="level-chip"><span class="dot" style="background:#2E7D32"></span>Formulario completo → Informe + menú semanal</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <span class="progress-label">Progreso</span>
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" id="progressBar"></div>
+    </div>
+    <span class="progress-pct" id="progressPct">0%</span>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="main" id="form-section">
+<form id="mainForm">
+
+  <!-- 1. DATOS GENERALES -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2 class="section-title">Datos generales</h2>
+    </div>
+    <div class="field-grid">
+      <div class="field">
+        <label>Edad</label>
+        <input type="number" name="edad" placeholder="años" min="15" max="90">
+      </div>
+      <div class="field">
+        <label>Sexo</label>
+        <select name="sexo">
+          <option value="">Selecciona...</option>
+          <option>Mujer</option>
+          <option>Hombre</option>
+          <option>Prefiero no decirlo</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Peso (kg)</label>
+        <input type="number" name="peso" placeholder="kg">
+      </div>
+      <div class="field">
+        <label>Altura (cm)</label>
+        <input type="number" name="altura" placeholder="cm">
+      </div>
+      <div class="field">
+        <label>Perímetro cintura (cm) <span style="color:var(--gray-mid);font-weight:400">· opcional</span></label>
+        <input type="number" name="cintura" placeholder="cm">
+      </div>
+      <div class="field">
+        <label>Fecha diagnóstico hipotiroidismo</label>
+        <input type="text" name="fecha_diagnostico" placeholder="Ej: 2019">
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="check-group inline">
+      <label class="check-item"><input type="checkbox" name="embarazo"><span class="check-box"></span>Embarazada o en búsqueda</label>
+      <label class="check-item"><input type="checkbox" name="fumadora"><span class="check-box"></span>Fumadora</label>
+    </div>
+  </div>
+
+  <!-- 2. TIPO DE HIPOTIROIDISMO -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2 class="section-title">Tipo de hipotiroidismo</h2>
+    </div>
+    <div class="check-group inline">
+      <label class="check-item"><input type="checkbox" name="tipo_hipot" value="Primario"><span class="check-box"></span>Primario</label>
+      <label class="check-item"><input type="checkbox" name="tipo_hipot" value="Secundario"><span class="check-box"></span>Secundario</label>
+      <label class="check-item"><input type="checkbox" name="tipo_hipot" value="Postquirúrgico"><span class="check-box"></span>Postquirúrgico</label>
+      <label class="check-item"><input type="checkbox" name="tipo_hipot" value="Post yodo radiactivo"><span class="check-box"></span>Post yodo radiactivo</label>
+      <label class="check-item"><input type="checkbox" name="tipo_hipot" value="Hashimoto"><span class="check-box"></span>Tiroiditis de Hashimoto</label>
+      <label class="check-item"><input type="checkbox" name="tipo_hipot" value="Subclínico"><span class="check-box"></span>Subclínico</label>
+    </div>
+    <div class="divider"></div>
+    <div class="check-group inline">
+      <label class="check-item"><input type="checkbox" name="anti_tpo"><span class="check-box"></span>Anti-TPO positivos</label>
+      <label class="check-item"><input type="checkbox" name="anti_tiroglobulina"><span class="check-box"></span>Antitiroglobulina positivos</label>
+    </div>
+  </div>
+
+  <!-- 3. MEDICACIÓN -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2 class="section-title">Medicación tiroidea</h2>
+    </div>
+    <div class="insight">
+      <strong>⚠️ Sección clave:</strong> Las interacciones con la levotiroxina dependen en gran parte de cómo y cuándo se toma. Cuanto más detallada sea tu respuesta, más precisas serán las alertas.
+    </div>
+    <div class="field-grid">
+      <div class="field">
+        <label>Dosis de levotiroxina (mcg)</label>
+        <input type="number" name="dosis_levo" placeholder="Ej: 75">
+      </div>
+      <div class="field">
+        <label>Marca comercial</label>
+        <select name="marca_levo">
+          <option value="">Selecciona...</option>
+          <option>Eutirox</option>
+          <option>Levothroid</option>
+          <option>Tirosint</option>
+          <option>Otra</option>
+          <option>No lo sé</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Hora de toma habitual</label>
+        <input type="text" name="hora_toma" placeholder="Ej: 7:00">
+      </div>
+      <div class="field">
+        <label>Minutos que espera antes de desayunar</label>
+        <input type="number" name="minutos_espera" placeholder="Ej: 30">
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="check-group inline">
+      <label class="check-item"><input type="checkbox" name="toma_ayunas"><span class="check-box"></span>Siempre en ayunas</label>
+      <label class="check-item"><input type="checkbox" name="toma_con_cafe"><span class="check-box"></span>La toma con café</label>
+      <label class="check-item"><input type="checkbox" name="cambio_marca"><span class="check-box"></span>Cambió de marca recientemente</label>
+      <label class="check-item"><input type="checkbox" name="toma_noche"><span class="check-box"></span>La toma por la noche</label>
+    </div>
+  </div>
+
+  <!-- 4. OTROS MEDICAMENTOS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2 class="section-title">Otros medicamentos</h2>
+    </div>
+    <div class="check-group inline">
+      <label class="check-item"><input type="checkbox" name="med" value="IBP"><span class="check-box"></span>IBPs (omeprazol, pantoprazol...)</label>
+      <label class="check-item"><input type="checkbox" name="med" value="Antiácidos"><span class="check-box"></span>Antiácidos (aluminio/magnesio)</label>
+      <label class="check-item"><input type="checkbox" name="med" value="Hierro_med"><span class="check-box"></span>Hierro (medicamento)</label>
+      <label class="check-item"><input type="checkbox" name="med" value="Calcio_med"><span class="check-box"></span>Calcio (medicamento)</label>
+      <label class="check-item"><input type="checkbox" name="med" value="Magnesio_med"><span class="check-box"></span>Magnesio (medicamento)</label>
+      <label class="check-item"><input type="checkbox" name="med" value="Metformina"><span class="check-box"></span>Metformina</label>
+      <label class="check-item"><input type="checkbox" name="med" value="Antidepresivos"><span class="check-box"></span>Antidepresivos</label>
+      <label class="check-item"><input type="checkbox" name="med" value="Anticonceptivos"><span class="check-box"></span>Anticonceptivos hormonales</label>
+      <label class="check-item"><input type="checkbox" name="med" value="Colestiramina"><span class="check-box"></span>Resinas (colestiramina, colestipol)</label>
+      <label class="check-item"><input type="checkbox" name="med" value="Raloxifeno"><span class="check-box"></span>Raloxifeno</label>
+      <label class="check-item"><input type="checkbox" name="med" value="GLP1"><span class="check-box"></span>GLP-1 (semaglutida, tirzepatida...)</label>
+    </div>
+  </div>
+
+  <!-- 5. SUPLEMENTACIÓN -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2 class="section-title">Suplementación</h2>
+    </div>
+    <div class="check-group inline">
+      <label class="check-item"><input type="checkbox" name="sup" value="VitD"><span class="check-box"></span>Vitamina D</label>
+      <label class="check-item"><input type="checkbox" name="sup" value="Omega3"><span class="check-box"></span>Omega 3</label>
+      <label class="check-item"><input type="checkbox" name="sup" value="Selenio"><span class="check-box"></span>Selenio</label>
+      <label class="check-item"><input type="checkbox" name="sup" value="Zinc"><span class="check-box"></span>Zinc</label>
+      <label class="check-item"><input type="checkbox" name="sup" value="Hierro_sup"><span class="check-box"></span>Hierro (suplemento)</label>
+      <label class="check-item"><input type="checkbox" name="sup" value="Calcio_sup"><span class="check-box"></span>Calcio (suplemento)</label>
+      <label class="check-item"><input type="checkbox" name="sup" value="Biotina"><span class="check-box"></span>Biotina (vitamina B7)</label>
+      <label class="check-item"><input type="checkbox" name="sup" value="Multivitaminico"><span class="check-box"></span>Multivitamínico</label>
+      <label class="check-item"><input type="checkbox" name="sup" value="Adaptogenos"><span class="check-box"></span>Adaptógenos</label>
+      <label class="check-item"><input type="checkbox" name="sup" value="Cromo"><span class="check-box"></span>Picolinato de cromo</label>
+      <label class="check-item"><input type="checkbox" name="sup" value="Yodo"><span class="check-box"></span>Suplemento con yodo</label>
+      <label class="check-item"><input type="checkbox" name="sup" value="Algas"><span class="check-box"></span>Algas</label>
+      <label class="check-item"><input type="checkbox" name="sup" value="Tiroides_support"><span class="check-box"></span>"Thyroid support" o similar</label>
+    </div>
+  </div>
+
+  <!-- 6. ANALÍTICA -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2 class="section-title">Analítica reciente</h2>
+      <span class="section-optional">Últimos 6 meses</span>
+    </div>
+    <p class="sublabel">Introduce los valores si los tienes disponibles. Cuantos más aportes, más específicas serán las recomendaciones.</p>
+    <div class="field-grid cols-3">
+      <div class="field">
+        <label>TSH (mUI/L)</label>
+        <input type="number" step="0.01" name="tsh" placeholder="Ej: 2.1">
+      </div>
+      <div class="field">
+        <label>T4 libre (ng/dL)</label>
+        <input type="number" step="0.01" name="t4l" placeholder="Ej: 1.2">
+      </div>
+      <div class="field">
+        <label>T3 libre (pg/mL)</label>
+        <input type="number" step="0.01" name="t3l" placeholder="Ej: 3.0">
+      </div>
+      <div class="field">
+        <label>Anti-TPO (UI/mL)</label>
+        <input type="number" step="0.1" name="anti_tpo_val" placeholder="Ej: 120">
+      </div>
+      <div class="field">
+        <label>Ferritina (ng/mL)</label>
+        <input type="number" step="0.1" name="ferritina" placeholder="Ej: 35">
+      </div>
+      <div class="field">
+        <label>Vitamina D (ng/mL)</label>
+        <input type="number" step="0.1" name="vitd" placeholder="Ej: 22">
+      </div>
+      <div class="field">
+        <label>B12 (pg/mL)</label>
+        <input type="number" step="1" name="b12" placeholder="Ej: 380">
+      </div>
+      <div class="field">
+        <label>Zinc (mcg/dL)</label>
+        <input type="number" step="0.1" name="zinc_val" placeholder="Ej: 80">
+      </div>
+      <div class="field">
+        <label>Hierro sérico (mcg/dL)</label>
+        <input type="number" step="0.1" name="hierro_s" placeholder="Ej: 90">
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="check-group inline">
+      <label class="check-item"><input type="checkbox" name="perfil_lipidico"><span class="check-box"></span>Perfil lipídico alterado</label>
+      <label class="check-item"><input type="checkbox" name="biotina_antes_analitica"><span class="check-box"></span>Tomaba biotina antes de la analítica</label>
+    </div>
+  </div>
+
+  <!-- 7. SÍNTOMAS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2 class="section-title">Síntomas actuales</h2>
+    </div>
+    <div class="check-group inline">
+      <label class="check-item"><input type="checkbox" name="sint" value="cansancio"><span class="check-box"></span>Cansancio</label>
+      <label class="check-item"><input type="checkbox" name="sint" value="frio"><span class="check-box"></span>Frío constante</label>
+      <label class="check-item"><input type="checkbox" name="sint" value="estrenimiento"><span class="check-box"></span>Estreñimiento</label>
+      <label class="check-item"><input type="checkbox" name="sint" value="piel_seca"><span class="check-box"></span>Piel seca</label>
+      <label class="check-item"><input type="checkbox" name="sint" value="caida_pelo"><span class="check-box"></span>Caída de cabello</label>
+      <label class="check-item"><input type="checkbox" name="sint" value="hinchazon"><span class="check-box"></span>Hinchazón</label>
+      <label class="check-item"><input type="checkbox" name="sint" value="peso"><span class="check-box"></span>Aumento de peso</label>
+      <label class="check-item"><input type="checkbox" name="sint" value="dif_perder_peso"><span class="check-box"></span>Dificultad para perder peso</label>
+      <label class="check-item"><input type="checkbox" name="sint" value="depresion"><span class="check-box"></span>Depresión / apatía</label>
+      <label class="check-item"><input type="checkbox" name="sint" value="niebla_mental"><span class="check-box"></span>Niebla mental</label>
+      <label class="check-item"><input type="checkbox" name="sint" value="menstrual"><span class="check-box"></span>Alteraciones menstruales</label>
+    </div>
+  </div>
+
+  <!-- 8. ALIMENTACIÓN -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <h2 class="section-title">Alimentación</h2>
+    </div>
+    <div class="check-group inline">
+      <label class="check-item"><input type="checkbox" name="ali" value="desayuno_30min"><span class="check-box"></span>Desayuna antes de 30 min tras medicación</label>
+      <label class="check-item"><input type="checkbox" name="ali" value="cafe_mañana"><span class="check-box"></span>Café matutino</label>
+      <label class="check-item"><input type="checkbox" name="ali" value="zumo_naranja"><span class="check-box"></span>Zumo de naranja en desayuno</label>
+      <label class="check-item"><input type="checkbox" name="ali" value="lacteos_desayuno"><span class="check-box"></span>Lácteos en desayuno</label>
+      <label class="check-item"><input type="checkbox" name="ali" value="fibra_alta"><span class="check-box"></span>Alta ingesta de fibra en desayuno</label>
+      <label class="check-item"><input type="checkbox" name="ali" value="soja_frecuente"><span class="check-box"></span>Soja frecuente</label>
+      <label class="check-item"><input type="checkbox" name="ali" value="cruciferas_crudas"><span class="check-box"></span>Crucíferas crudas frecuentes</label>
+      <label class="check-item"><input type="checkbox" name="ali" value="vegetariana"><span class="check-box"></span>Dieta vegetariana/vegana</label>
+      <label class="check-item"><input type="checkbox" name="ali" value="ultraprocesados"><span class="check-box"></span>Consumo frecuente de ultraprocesados</label>
+      <label class="check-item"><input type="checkbox" name="ali" value="restriccion_calorica"><span class="check-box"></span>Restricción calórica severa</label>
+      <label class="check-item"><input type="checkbox" name="ali" value="pomelo"><span class="check-box"></span>Zumo de pomelo frecuente</label>
+      <label class="check-item"><input type="checkbox" name="ali" value="nueces"><span class="check-box"></span>Nueces con/tras medicación</label>
+    </div>
+    <div style="margin-top:16px;">
+      <div style="font-size:13px;font-weight:700;color:var(--negro);margin-bottom:10px;">Intolerancias y alergias alimentarias <span style="font-weight:400;color:#888;">· marca las que apliquen</span></div>
+      <div class="check-group inline">
+        <label class="check-item"><input type="checkbox" name="intolerancias" value="lactosa"><span class="check-box"></span>Intolerancia a la lactosa</label>
+        <label class="check-item"><input type="checkbox" name="intolerancias" value="gluten"><span class="check-box"></span>Intolerancia al gluten / celiaquía</label>
+        <label class="check-item"><input type="checkbox" name="intolerancias" value="frutos-secos"><span class="check-box"></span>Alergia a frutos secos</label>
+        <label class="check-item"><input type="checkbox" name="intolerancias" value="marisco"><span class="check-box"></span>Alergia al marisco</label>
+        <label class="check-item"><input type="checkbox" name="intolerancias" value="huevo"><span class="check-box"></span>Alergia al huevo</label>
+        <label class="check-item"><input type="checkbox" name="intolerancias" value="pescado"><span class="check-box"></span>Alergia al pescado</label>
+        <label class="check-item"><input type="checkbox" name="intolerancias" value="vegetariana"><span class="check-box"></span>Vegetariana / vegana</label>
+      </div>
+      <input type="text" name="intolerancias-otras" placeholder="Otras intolerancias o alergias…" style="width:100%; margin-top:10px; padding:10px 14px; border:1.5px solid #e0e0e0; font-size:14px; font-family:inherit;">
+    </div>
+  </div>
+
+  <!-- 9. SALUD DIGESTIVA -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">9</div>
+      <h2 class="section-title">Salud digestiva</h2>
+      <span class="section-optional">Opcional</span>
+    </div>
+    <div class="check-group inline">
+      <label class="check-item"><input type="checkbox" name="dig" value="distension"><span class="check-box"></span>Distensión abdominal</label>
+      <label class="check-item"><input type="checkbox" name="dig" value="reflujo"><span class="check-box"></span>Reflujo</label>
+      <label class="check-item"><input type="checkbox" name="dig" value="sibo"><span class="check-box"></span>SIBO diagnosticado</label>
+      <label class="check-item"><input type="checkbox" name="dig" value="celiaca"><span class="check-box"></span>Enfermedad celíaca</label>
+      <label class="check-item"><input type="checkbox" name="dig" value="gluten"><span class="check-box"></span>Sensibilidad al gluten</label>
+      <label class="check-item"><input type="checkbox" name="dig" value="estren_cronico"><span class="check-box"></span>Estreñimiento crónico</label>
+      <label class="check-item"><input type="checkbox" name="dig" value="diarrea"><span class="check-box"></span>Diarrea frecuente</label>
+      <label class="check-item"><input type="checkbox" name="dig" value="antibioticos"><span class="check-box"></span>Uso frecuente de antibióticos</label>
+    </div>
+  </div>
+
+  <!-- 10. ESTILO DE VIDA -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">10</div>
+      <h2 class="section-title">Estilo de vida</h2>
+      <span class="section-optional">Opcional</span>
+    </div>
+    <div class="check-group inline">
+      <label class="check-item"><input type="checkbox" name="vida" value="estres_alto"><span class="check-box"></span>Nivel de estrés alto</label>
+      <label class="check-item"><input type="checkbox" name="vida" value="poco_sueno"><span class="check-box"></span>Duerme menos de 6-7 horas</label>
+      <label class="check-item"><input type="checkbox" name="vida" value="fuerza"><span class="check-box"></span>Entrenamiento de fuerza</label>
+      <label class="check-item"><input type="checkbox" name="vida" value="cardio"><span class="check-box"></span>Solo cardio</label>
+      <label class="check-item"><input type="checkbox" name="vida" value="sedentarismo"><span class="check-box"></span>Sedentarismo</label>
+    </div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-section">
+    <h3>¿Lista para ver tu informe?</h3>
+    <p>Cuantos más bloques hayas completado, más recomendaciones personalizadas recibirás. Si has completado todo el formulario, incluiremos tu plan de menú semanal.</p>
+
+    <div style="background:#fff5f0; border:2px solid #E8521A; padding:18px 22px; margin:20px 0; text-align:left; border-radius:0;">
+      <div style="font-size:11px; font-weight:900; letter-spacing:3px; color:#E8521A; text-transform:uppercase; margin-bottom:8px;">🎁 Oferta exclusiva · Hasta el 31 de marzo</div>
+      <div style="font-size:15px; font-weight:800; color:#1a1a1a; margin-bottom:6px;">10% de descuento en tu primer mes de programa de alimentación</div>
+      <div style="font-size:13px; color:#666; line-height:1.6;">Tras recibir tu informe, si decides iniciar un programa personalizado con Paola tendrás un <strong>10% de descuento el primer mes</strong>. Escríbele por DM en Instagram para más info 💛</div>
+    </div>
+
+    <div style="margin-bottom:18px; text-align:left;">
+      <label style="font-size:13px; font-weight:700; color:#1a1a1a; display:block; margin-bottom:7px;">Tu email <span style="font-weight:400; color:#666;">· opcional, para guardarte el informe</span></label>
+      <input type="email" id="user-email" placeholder="tu@email.com" style="width:100%; max-width:420px; padding:10px 14px; border:1.5px solid #e0e0e0; font-size:14px; font-family:inherit; border-radius:0;">
+    </div>
+
+    <button type="submit" class="btn-submit">Generar mi informe personalizado →</button>
+  </div>
+
+</form>
+</div>
+
+<!-- RESULT PANEL -->
+<div id="result-panel">
+  <div class="result-header">
+    <div class="badge">Tu informe PSNF</div>
+    <h2 id="result-title">Informe de Hipotiroidismo Personalizado</h2>
+    <p id="result-subtitle">Basado en tus respuestas · Paola Sánchez Nutrición y Farmacia</p>
+  </div>
+
+  <div id="alerts-section">
+    <div class="result-section-title">🔴 Alertas críticas</div>
+    <div id="red-alerts"></div>
+
+    <div class="result-section-title">🟠 Puntos importantes</div>
+    <div id="orange-alerts"></div>
+
+    <div class="result-section-title">🟡 A tener en cuenta</div>
+    <div id="yellow-alerts"></div>
+
+    <div class="result-section-title">✅ Recomendaciones generales</div>
+    <div id="green-alerts"></div>
+  </div>
+
+  <div id="menu-section" style="display:none">
+    <div class="result-section-title">🥗 Tu plan de menú semanal personalizado</div>
+    <p style="color:rgba(255,255,255,0.6);font-size:14px;margin-bottom:20px">Adaptado a tu medicación, síntomas y hábitos reportados.</p>
+    <div class="menu-grid" id="menu-grid"></div>
+  </div>
+
+  <div class="download-bar">
+    <div>
+      <strong>Descarga tu informe completo</strong>
+      <p>En formato PDF con todas tus alertas y recomendaciones personalizadas.</p>
+    </div>
+    <button class="btn-download" onclick="window.print()">⬇ Descargar PDF</button>
+  </div>
+
+  <div style="background:#1a1a1a; border-left:5px solid #E8521A; padding:24px 28px; margin-top:24px;">
+    <div style="font-size:11px; font-weight:900; letter-spacing:3px; color:#E8521A; text-transform:uppercase; margin-bottom:10px;">🎁 Oferta exclusiva · Hasta el 31 de marzo</div>
+    <div style="font-size:18px; font-weight:900; color:#fff; margin-bottom:8px;">¿Quieres ir un paso más allá?</div>
+    <div style="font-size:14px; color:rgba(255,255,255,0.65); line-height:1.7; margin-bottom:16px;">Si decides iniciar un <strong style="color:#fff">programa de alimentación personalizado</strong> con Paola, tienes un <strong style="color:#E8521A">10% de descuento el primer mes</strong> por haber hecho el test. Solo hasta el 31 de marzo.</div>
+    <a href="https://instagram.com/paola_nutricion_farmacia" target="_blank" style="display:inline-block; background:#E8521A; color:#fff; padding:12px 28px; font-size:13px; font-weight:900; letter-spacing:1px; text-transform:uppercase; text-decoration:none;">Escríbeme por DM →</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <strong>PSNF · Paola Sánchez Nutrición y Farmacia</strong><br>
+  Este informe es orientativo y no sustituye la consulta médica. Consulta siempre con tu endocrino, médico o farmacéutico.<br>
+  <a href="https://instagram.com/paola_nutricion_farmacia" style="color:var(--orange);text-decoration:none;">@paola_nutricion_farmacia</a> en Instagram
+</footer>
+
+<script>
+// ===========================
+// PROGRESS BAR
+// ===========================
+function updateProgress() {
+  const form = document.getElementById('mainForm');
+  const inputs = form.querySelectorAll('input, select');
+  let filled = 0, total = 0;
+  const counted = new Set();
+
+  inputs.forEach(inp => {
+    if (inp.type === 'checkbox') {
+      const name = inp.name;
+      if (!counted.has(name)) { counted.add(name); total++; }
+      if (inp.checked && !counted.has(name + '_checked')) {
+        counted.add(name + '_checked'); filled++;
+      }
+    } else if (inp.type !== 'submit') {
+      total++;
+      if (inp.value.trim()) filled++;
+    }
+  });
+
+  const pct = Math.round((filled / total) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+}
+
+document.getElementById('mainForm').addEventListener('change', updateProgress);
+document.getElementById('mainForm').addEventListener('input', updateProgress);
+
+// ===========================
+// RULES ENGINE
+// ===========================
+function getCheckedValues(name) {
+  return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(i => i.value);
+}
+
+function isChecked(name) {
+  const el = document.querySelector(`input[name="${name}"]`);
+  return el && el.checked;
+}
+
+function getVal(name) {
+  const el = document.querySelector(`[name="${name}"]`);
+  return el ? el.value.trim() : '';
+}
+
+function getNum(name) {
+  return parseFloat(getVal(name)) || null;
+}
+
+function generateAlerts() {
+  const alerts = { red: [], orange: [], yellow: [], green: [] };
+
+  const toma_cafe = isChecked('toma_con_cafe');
+  const meds = getCheckedValues('med');
+  const sups = getCheckedValues('sup');
+  const ali = getCheckedValues('ali');
+  const sint = getCheckedValues('sint');
+  const dig = getCheckedValues('dig');
+  const vida = getCheckedValues('vida');
+  const tipos = getCheckedValues('tipo_hipot');
+  const hashimoto = tipos.includes('Hashimoto');
+
+  const tsh = getNum('tsh');
+  const t3l = getNum('t3l');
+  const t4l = getNum('t4l');
+  const ferritina = getNum('ferritina');
+  const vitd = getNum('vitd');
+  const b12 = getNum('b12');
+  const minutos = getNum('minutos_espera');
+  const dosis = getNum('dosis_levo');
+
+  // === ROJAS ===
+  if (toma_cafe) alerts.red.push({ title: '☕ Levotiroxina con café', text: 'El café reduce la absorción de levotiroxina hasta un 30%. Toma siempre la medicación con agua y espera mínimo 30-60 minutos antes de tomar el café.' });
+  if (meds.includes('Hierro_med') || sups.includes('Hierro_sup')) alerts.red.push({ title: '🔩 Hierro cerca de la levotiroxina', text: 'El hierro forma quelatos con la levotiroxina y bloquea su absorción. Separa la toma mínimo 4 horas. Esto incluye multivitamínicos que contengan hierro.' });
+  if (meds.includes('Calcio_med') || sups.includes('Calcio_sup')) alerts.red.push({ title: '🦴 Calcio cerca de la levotiroxina', text: 'El calcio reduce significativamente la absorción de levotiroxina. Separa la toma mínimo 4 horas de la medicación tiroidea.' });
+  if (ferritina !== null && ferritina < 40) alerts.red.push({ title: `🩸 Ferritina baja (${ferritina} ng/mL)`, text: 'Tu ferritina está por debajo de 40 ng/mL. La ferropenia puede empeorar síntomas de hipotiroidismo y dificultar la conversión de T4 a T3, aunque el TSH sea normal. Plantéate suplementar con supervisión.' });
+  if (vitd !== null && vitd < 30) alerts.red.push({ title: `☀️ Déficit de Vitamina D (${vitd} ng/mL)`, text: 'La vitamina D baja es muy frecuente en Hashimoto y puede empeorar la autoinmunidad y los síntomas. Niveles óptimos se sitúan entre 40-60 ng/mL. Consulta suplementación con tu médico.' });
+  if (sups.includes('Algas') && hashimoto) alerts.red.push({ title: '🌿 Algas en Hashimoto', text: 'Las algas contienen yodo en cantidades variables y no controladas. El exceso de yodo puede activar la autoinmunidad y empeorar la tiroiditis de Hashimoto. Se recomienda evitarlas.' });
+  if (sups.includes('Yodo') && hashimoto) alerts.red.push({ title: '⚠️ Suplemento de yodo en Hashimoto', text: 'La suplementación extra de yodo en enfermedad autoinmune tiroidea no está indicada y puede ser contraproducente. Consulta con tu endocrino antes de continuar.' });
+  if (meds.includes('Colestiramina')) alerts.red.push({ title: '💊 Colestiramina / colestipol', text: 'Las resinas secuestradoras de ácidos biliares reducen drásticamente la absorción de levotiroxina. Separa la toma mínimo 4-6 horas. Informa siempre a tu médico.' });
+
+  // === NARANJAS ===
+  if (minutos !== null && minutos < 30) alerts.orange.push({ title: `⏱️ Espera insuficiente (${minutos} min)`, text: 'Esperas menos de 30 minutos antes de desayunar. Se recomienda un mínimo de 30-60 minutos con agua para optimizar la absorción de levotiroxina.' });
+  if (ali.includes('desayuno_30min') && minutos === null) alerts.orange.push({ title: '⏱️ Tiempo de espera tras medicación', text: 'Desayunar antes de 30 minutos tras la toma reduce la absorción. Espera mínimo 30-60 minutos, solo con agua.' });
+  if (tsh !== null && tsh > 2.5 && sint.length > 0) alerts.orange.push({ title: `📊 TSH ${tsh} mUI/L con síntomas activos`, text: 'Tu TSH podría estar en rango de laboratorio pero tus síntomas sugieren que no estás optimizada. Algunos expertos sugieren TSH óptimo entre 1-2 mUI/L en pacientes sintomáticos. Consulta con tu endocrino.' });
+  if (t3l !== null && t3l < 2.5 && tsh !== null && tsh < 4.5) alerts.orange.push({ title: `🔄 T3 libre baja (${t3l} pg/mL) con TSH normal`, text: 'Posible problema de conversión T4→T3. La analítica estándar puede no reflejarlo adecuadamente. Puede estar relacionado con déficit de selenio, hierro o función hepática. Consulta con tu médico.' });
+  if (meds.includes('IBP')) alerts.orange.push({ title: '🔵 Inhibidores de bomba de protones (IBP)', text: 'El omeprazol y similares reducen la acidez gástrica, lo que puede afectar la absorción de levotiroxina. Si tomas ambos, consulta con tu médico para optimizar los horarios.' });
+  if (meds.includes('Metformina')) alerts.orange.push({ title: '💊 Metformina + levotiroxina', text: 'La metformina puede reducir los niveles de TSH artificialmente, lo que complica la interpretación de tus analíticas. Importante que tu médico lo tenga en cuenta.' });
+  if (meds.includes('Anticonceptivos')) alerts.orange.push({ title: '💊 Anticonceptivos hormonales', text: 'Los estrógenos aumentan la globulina transportadora de hormonas tiroideas (TBG). Algunas mujeres necesitan ajuste de dosis de levotiroxina al iniciar o cambiar anticonceptivos.' });
+  if (isChecked('cambio_marca') && sint.length > 0) alerts.orange.push({ title: '🔄 Cambio de marca reciente con síntomas', text: 'Los cambios de marca pueden alterar la biodisponibilidad y el control tiroideo. Solicita una analítica de control a las 6-8 semanas del cambio.' });
+  if (sups.includes('Biotina') || isChecked('biotina_antes_analitica')) alerts.orange.push({ title: '💊 Biotina y analíticas tiroideas', text: 'La biotina en dosis altas interfiere en la medición de TSH, T4 y T3 en laboratorio, pudiendo dar resultados falsamente alterados. Suspéndela 48-72 horas antes de cualquier analítica tiroidea.' });
+  if (meds.includes('GLP1')) alerts.orange.push({ title: '💉 GLP-1 (semaglutida / tirzepatida)', text: 'Estos fármacos ralentizan el vaciado gástrico, lo que puede alterar la absorción y los niveles de levotiroxina. Monitoriza con analíticas periódicas.' });
+  if (sups.includes('Cromo')) alerts.orange.push({ title: '🔬 Picolinato de cromo', text: 'El cromo forma quelatos con la levotiroxina y puede reducir su absorción. Separa la toma mínimo 2-4 horas.' });
+  if (meds.includes('Raloxifeno')) alerts.orange.push({ title: '💊 Raloxifeno', text: 'El raloxifeno puede reducir la absorción de levotiroxina. Separa las tomas y consulta con tu médico el control analítico.' });
+  if (isChecked('embarazo')) alerts.orange.push({ title: '🤰 Embarazo o búsqueda', text: 'Las necesidades de levotiroxina aumentan significativamente durante el embarazo (hasta un 30-50%). El control del TSH es crítico en el primer trimestre. Consulta urgentemente con tu endocrino.' });
+  if (b12 !== null && b12 < 300) alerts.orange.push({ title: `🔬 B12 baja (${b12} pg/mL)`, text: 'La deficiencia de B12 es frecuente en Hashimoto y puede causar fatiga, niebla mental y síntomas neurológicos similares al hipotiroidismo. Considera suplementar.' });
+
+  // === AMARILLAS ===
+  if (ali.includes('lacteos_desayuno')) alerts.yellow.push({ title: '🥛 Lácteos en el desayuno', text: 'El calcio de los lácteos puede interferir con la absorción si el tiempo de espera tras la medicación es insuficiente. Asegúrate de esperar al menos 30-60 minutos.' });
+  if (ali.includes('soja_frecuente')) alerts.yellow.push({ title: '🫘 Soja frecuente', text: 'La soja puede interferir con la absorción de levotiroxina, especialmente si hay déficit de yodo. Consúmela alejada de la medicación y en cantidades moderadas.' });
+  if (ali.includes('cruciferas_crudas') && hashimoto) alerts.yellow.push({ title: '🥦 Crucíferas crudas en Hashimoto', text: 'Las crucíferas crudas contienen glucosinolatos que pueden interferir con la captación de yodo. El efecto disminuye mucho con la cocción. No es necesario eliminarlas, pero modera el consumo en crudo.' });
+  if (ali.includes('pomelo')) alerts.yellow.push({ title: '🍊 Zumo de pomelo', text: 'El pomelo puede reducir la absorción de levotiroxina. Evítalo en las horas cercanas a la toma de medicación.' });
+  if (ali.includes('nueces')) alerts.yellow.push({ title: '🌰 Nueces cerca de la medicación', text: 'Las nueces contienen compuestos que pueden reducir la absorción de levotiroxina. Consúmelas alejadas de la toma.' });
+  if (ali.includes('fibra_alta')) alerts.yellow.push({ title: '🌾 Alta ingesta de fibra en desayuno', text: 'El exceso de fibra puede ralentizar y disminuir la absorción de levotiroxina. Si desayunas con mucha fibra, asegura un tiempo de espera adecuado.' });
+  if (vida.includes('estres_alto')) alerts.yellow.push({ title: '🧠 Estrés crónico', text: 'El cortisol elevado por estrés interfiere con la función tiroidea y puede empeorar los síntomas. La gestión del estrés es parte del tratamiento integral.' });
+  if (vida.includes('poco_sueno')) alerts.yellow.push({ title: '😴 Sueño insuficiente', text: 'Dormir menos de 6-7 horas impacta negativamente en el sistema inmune y en la regulación hormonal, incluyendo la función tiroidea.' });
+  if (ali.includes('vegetariana')) alerts.yellow.push({ title: '🌱 Dieta vegetariana/vegana', text: 'Mayor riesgo de déficit de B12, hierro, zinc y selenio, nutrientes clave para la función tiroidea y la conversión T4→T3. Revisa tus niveles analíticamente.' });
+  if (isChecked('fumadora')) alerts.yellow.push({ title: '🚬 Tabaco', text: 'El tabaco afecta negativamente la conversión de T4 a T3 y puede empeorar la autoinmunidad tiroidea. Es un factor modificable importante.' });
+  if (dig.includes('celiaca') || dig.includes('gluten')) alerts.yellow.push({ title: '🌾 Sensibilidad al gluten / Celiaquía', text: 'Existe una asociación entre enfermedad celíaca no tratada y Hashimoto. La malabsorción intestinal puede reducir la absorción de levotiroxina. Asegúrate de seguir estrictamente la dieta sin gluten.' });
+  if (sups.includes('Tiroides_support')) alerts.yellow.push({ title: '⚠️ "Thyroid support" y suplementos sin evidencia', text: 'Muchos suplementos "para tiroides" carecen de evidencia científica y pueden contener hormonas tiroideas ocultas o exceso de yodo. No los tomes sin supervisión profesional.' });
+
+  // === VERDES (recomendaciones siempre) ===
+  alerts.green.push({ title: '⏰ Consistencia en el horario', text: 'Toma la levotiroxina siempre a la misma hora. La consistencia ayuda a estabilizar los niveles hormonales y evita fluctuaciones del TSH.' });
+  alerts.green.push({ title: '💧 Solo con agua', text: 'Toma la levotiroxina siempre con agua. Ni café, ni zumos, ni infusiones. Solo agua.' });
+  alerts.green.push({ title: '🩺 Informa de tus suplementos', text: 'Comunica a tu endocrino y farmacéutico todos los suplementos que tomas, incluida la biotina, ya que pueden influir en los resultados analíticos.' });
+  alerts.green.push({ title: '📋 Analítica de control', text: 'Si has cambiado de marca, dosis, o has iniciado nuevos medicamentos o suplementos, solicita una analítica tiroidea de control a las 6-8 semanas.' });
+  if (t3l !== null || tsh !== null) alerts.green.push({ title: '🔄 Pide T3 libre en tu próxima analítica', text: 'La T3 libre es el indicador más preciso del estado hormonal real. Si solo te miden TSH y T4, pide también T3 libre, especialmente si sigues con síntomas.' });
+
+  return alerts;
+}
+
+// ===========================
+// MENU CON IA
+// ===========================
+async function generarMenuIA() {
+  const hashimoto = getCheckedValues('tipo_hipot').includes('Hashimoto');
+  const isVeg = getCheckedValues('ali').includes('vegetariana');
+  const sint = getCheckedValues('sint');
+  const vida = getCheckedValues('vida');
+  const dosis = getVal('dosis_levo');
+  const hora = getVal('hora_toma');
+  const minutos = getVal('minutos_espera');
+  const intolerancias = getCheckedValues('intolerancias');
+  const intoleranciaOtras = getVal('intolerancias-otras');
+  const todasIntolerancias = [...intolerancias, intoleranciaOtras].filter(Boolean).join(', ');
+
+  const prompt = `Eres Paola Sánchez, farmacéutica y nutricionista especialista en tiroides. Genera un menú semanal completo (lunes a domingo) para una paciente con hipotiroidismo${hashimoto ? ' tipo Hashimoto' : ''}.
+
+Datos clave:
+- Levotiroxina: ${dosis || 'dosis no indicada'} mcg, toma a las ${hora || 'hora no indicada'}, espera ${minutos || '?'} minutos
+- Dieta: ${isVeg ? 'vegetariana/vegana' : 'omnívora'}
+- Síntomas: ${sint.join(', ') || 'no indicados'}
+- Estilo de vida: ${vida.join(', ') || 'no indicado'}
+- Intolerancias/alergias: ${todasIntolerancias || 'ninguna indicada'}
+
+Criterios obligatorios:
+- Desayuno SIEMPRE empieza con recordatorio de tomar levotiroxina con agua y esperar
+- Rica en selenio (nueces de Brasil, sardinas, huevos), zinc, hierro hemo, omega-3
+- ${hashimoto ? 'Antiinflamatoria: evitar gluten y lácteos en exceso, crucíferas solo cocinadas' : 'Variada y equilibrada'}
+- Proteína 1.2-1.5g/kg en cada comida principal
+- Sin alimentos que interfieran con la medicación a primera hora
+- RESPETAR ESTRICTAMENTE todas las intolerancias y alergias indicadas
+
+Formato EXACTO (JSON, sin markdown, sin texto extra):
+{"menu":[{"dia":"Lunes","desayuno":"...","media_manana":"...","comida":"...","merienda":"...","cena":"..."},{"dia":"Martes",...},{"dia":"Miércoles",...},{"dia":"Jueves",...},{"dia":"Viernes",...},{"dia":"Sábado",...},{"dia":"Domingo",...}],"consejos":["consejo1","consejo2","consejo3"]}`;
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "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",
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true"
+    },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 2500,
+      messages: [{ role: "user", content: prompt }]
+    })
+  });
+
+  const result = await response.json();
+  const text = result.content[0].text;
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+// ===========================
+// FORM SUBMIT
+// ===========================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3Wbo_tMggnWK9i50Wz_WiYxwMnO9PtqtH5z2Gv03YDvWaFrPaz2pkTdhZdZzXWpbQgA/exec';
+
+async function registrarEnSheets(datos) {
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datos)
+    });
+  } catch(e) {
+    console.log('Sheets log error (non-critical):', e);
+  }
+}
+
+document.getElementById('mainForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  // Registrar en Google Sheets
+  registrarEnSheets({
+    hoja: 'Tiroides',
+    email: document.getElementById('user-email') ? document.getElementById('user-email').value : '',
+    edad: getVal('edad') || '',
+    fase: getCheckedValues('tipo_hipot').join(', '),
+    sintomas: getCheckedValues('sint').slice(0,5).join(', '),
+    medicacion: getVal('dosis_levo') ? 'levo ' + getVal('dosis_levo') + 'mcg · ' + getCheckedValues('med').join(', ') : getCheckedValues('med').join(', '),
+    ejercicio: getCheckedValues('vida').join(', '),
+    completado: [getVal('edad'), getVal('dosis_levo'), getVal('tsh'), getCheckedValues('sint').length > 0].filter(Boolean).length >= 3 ? 'Sí' : 'Básico'
+  });
+
+  // Check completion level
+  const sectionsFilled = [
+    getVal('edad') || getVal('sexo'),
+    getCheckedValues('tipo_hipot').length > 0,
+    getVal('dosis_levo') || getVal('hora_toma'),
+    getCheckedValues('med').length > 0,
+    getCheckedValues('sup').length > 0,
+    getVal('tsh') || getVal('ferritina'),
+    getCheckedValues('sint').length > 0,
+    getCheckedValues('ali').length > 0,
+    getCheckedValues('dig').length > 0,
+    getCheckedValues('vida').length > 0
+  ].filter(Boolean).length;
+
+  const isComplete = sectionsFilled >= 8;
+
+  // Generate alerts
+  const alerts = generateAlerts();
+
+  // Show result panel
+  document.getElementById('form-section').style.display = 'none';
+  document.getElementById('result-panel').style.display = 'block';
+
+  // Update title
+  const nombre = getVal('edad') ? `Informe personalizado · ${getVal('edad')} años` : 'Informe personalizado PSNF';
+  document.getElementById('result-title').textContent = nombre;
+
+  // Render alerts
+  function renderAlerts(containerId, alertList, cls, icon) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    if (alertList.length === 0) {
+      container.innerHTML = `<div class="alert-card ${cls}"><div class="alert-icon">${icon}</div><div class="alert-content"><p>No se han detectado alertas en esta categoría según tus respuestas.</p></div></div>`;
+    } else {
+      alertList.forEach(a => {
+        container.innerHTML += `<div class="alert-card ${cls}"><div class="alert-icon">${icon}</div><div class="alert-content"><h4>${a.title}</h4><p>${a.text}</p></div></div>`;
+      });
+    }
+  }
+
+  renderAlerts('red-alerts', alerts.red, 'red', '🔴');
+  renderAlerts('orange-alerts', alerts.orange, 'orange', '🟠');
+  renderAlerts('yellow-alerts', alerts.yellow, 'yellow', '🟡');
+  renderAlerts('green-alerts', alerts.green, 'green', '✅');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Menu con IA
+  if (isComplete) {
+    const menuSection = document.getElementById('menu-section');
+    menuSection.style.display = 'block';
+    const menuGrid = document.getElementById('menu-grid');
+    menuGrid.innerHTML = '<div style="padding:20px;color:rgba(255,255,255,0.6);font-size:14px;">⏳ Generando tu menú personalizado con IA…</div>';
+
+    try {
+      const menuData = await generarMenuIA();
+      menuGrid.innerHTML = menuData.menu.map(d => `
+        <div class="menu-day">
+          <div class="day-name">${d.dia}</div>
+          <div class="menu-meal"><strong>Desayuno</strong>${d.desayuno}</div>
+          <div class="menu-meal"><strong>Media mañana</strong>${d.media_manana}</div>
+          <div class="menu-meal"><strong>Comida</strong>${d.comida}</div>
+          <div class="menu-meal"><strong>Merienda</strong>${d.merienda}</div>
+          <div class="menu-meal"><strong>Cena</strong>${d.cena}</div>
+        </div>
+      `).join('') + (menuData.consejos ? `
+        <div style="grid-column:1/-1;background:rgba(232,82,26,0.1);border-left:4px solid #E8521A;padding:16px 20px;margin-top:8px;">
+          <strong style="color:#E8521A;font-size:12px;letter-spacing:2px;text-transform:uppercase;">💡 Consejos clave para tu caso</strong>
+          ${menuData.consejos.map(c => `<p style="font-size:13px;margin-top:8px;color:rgba(255,255,255,0.8);">• ${c}</p>`).join('')}
+        </div>` : '');
+    } catch(err) {
+      menuGrid.innerHTML = '<div style="padding:20px;color:rgba(255,255,255,0.5);font-size:13px;">No se pudo generar el menú en este momento. Inténtalo de nuevo.</div>';
+    }
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PSNF · Test Menopausia</title>
+  <style>
+    :root {
+      --naranja: #E8521A;
+      --naranja-light: #f0734a;
+      --negro: #1a1a1a;
+      --gris-oscuro: #2d2d2d;
+      --gris-medio: #555;
+      --gris-claro: #f5f5f5;
+      --blanco: #fff;
+      --borde: #e0e0e0;
+      --verde: #2e7d32;
+      --rojo: #c62828;
+      --amarillo: #f57f17;
+      --azul: #1565c0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background: var(--gris-claro);
+      color: var(--negro);
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    .header {
+      background: var(--negro);
+      color: var(--blanco);
+      padding: 0;
+      border-bottom: 4px solid var(--naranja);
+    }
+    .header-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 28px 24px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .header-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 2px solid var(--naranja);
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .header-text {}
+    .header-brand {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: var(--naranja);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .header-title {
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1.2;
+      color: var(--blanco);
+    }
+    .header-title em {
+      font-style: italic;
+      color: var(--naranja);
+    }
+    .header-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 4px;
+    }
+
+    /* MAIN CONTAINER */
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 16px 60px;
+    }
+
+    /* INTRO CARD */
+    .intro-card {
+      background: var(--blanco);
+      border-left: 5px solid var(--naranja);
+      padding: 20px 24px;
+      margin: 24px 0 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .intro-card .icon { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+    .intro-card p { font-size: 14px; line-height: 1.7; color: var(--gris-medio); }
+    .intro-card strong { color: var(--negro); }
+
+    /* PROGRESS */
+    .progress-wrap {
+      background: var(--blanco);
+      padding: 14px 20px;
+      margin-bottom: 20px;
+      border: 1px solid var(--borde);
+    }
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--gris-medio);
+      margin-bottom: 8px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .progress-bar {
+      height: 6px;
+      background: #e0e0e0;
+      border-radius: 0;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--naranja);
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    /* BLOCKS */
+    .block {
+      background: var(--blanco);
+      border: 1px solid var(--borde);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .block-header {
+      background: var(--negro);
+      color: var(--blanco);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .block-number {
+      background: var(--naranja);
+      color: var(--blanco);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    .block-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      flex: 1;
+    }
+    .block-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 2px;
+    }
+    .badge-required { background: rgba(232,82,26,0.2); color: var(--naranja); }
+    .badge-optional { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.5); }
+    .block-arrow {
+      font-size: 14px;
+      color: rgba(255,255,255,0.4);
+      transition: transform 0.2s;
+    }
+    .block-arrow.open { transform: rotate(180deg); }
+
+    .block-body {
+      padding: 20px;
+      display: none;
+    }
+    .block-body.open { display: block; }
+
+    /* ALERT in block */
+    .block-alert {
+      background: #fff8e1;
+      border-left: 4px solid #f9a825;
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #5d4037;
+    }
+
+    /* FORM ELEMENTS */
+    .field-group { margin-bottom: 18px; }
+    .field-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--negro);
+      margin-bottom: 7px;
+      display: block;
+      letter-spacing: 0.3px;
+    }
+    .field-label .optional {
+      font-weight: 400;
+      color: var(--gris-medio);
+      font-size: 12px;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--borde);
+      border-radius: 0;
+      font-size: 14px;
+      color: var(--negro);
+      background: var(--blanco);
+      font-family: inherit;
+      transition: border-color 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--naranja);
+    }
+
+    .fields-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .fields-row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* CHECKBOX GRID */
+    .check-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .check-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border: 1.5px solid var(--borde);
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .check-item:hover { border-color: var(--naranja); background: #fff5f0; }
+    .check-item.selected { border-color: var(--naranja); background: #fff5f0; }
+
+    .check-item input[type="checkbox"],
+    .check-item input[type="radio"] {
+      width: 16px;
+      height: 16px;
+      min-width: 16px;
+      padding: 0;
+      accent-color: var(--naranja);
+      cursor: pointer;
+    }
+    .check-item label {
+      font-size: 13px;
+      color: var(--negro);
+      cursor: pointer;
+      line-height: 1.3;
+    }
+
+    /* RADIO GROUP (horizontal) */
+    .radio-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border: 1.5px solid var(--borde);
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .radio-item:hover { border-color: var(--naranja); }
+    .radio-item.selected { border-color: var(--naranja); background: #fff5f0; }
+    .radio-item input[type="radio"] {
+      width: 15px; height: 15px; min-width: 15px;
+      padding: 0; accent-color: var(--naranja);
+    }
+    .radio-item label { font-size: 13px; cursor: pointer; }
+
+    /* FASE selector especial */
+    .fase-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .fase-card {
+      border: 2px solid var(--borde);
+      padding: 14px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+    .fase-card:hover { border-color: var(--naranja); }
+    .fase-card.selected { border-color: var(--naranja); background: #fff5f0; }
+    .fase-card input[type="radio"] { display: none; }
+    .fase-card .fase-icon { font-size: 26px; margin-bottom: 6px; }
+    .fase-card .fase-name { font-size: 13px; font-weight: 700; color: var(--negro); }
+    .fase-card .fase-desc { font-size: 11px; color: var(--gris-medio); margin-top: 3px; line-height: 1.4; }
+
+    /* EJERCICIO especial */
+    .ejercicio-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .ejercicio-card {
+      border: 2px solid var(--borde);
+      padding: 12px 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+    .ejercicio-card:hover { border-color: var(--naranja); }
+    .ejercicio-card.selected { border-color: var(--naranja); background: #fff5f0; }
+    .ejercicio-card input[type="checkbox"] { display: none; }
+    .ejercicio-card .ej-icon { font-size: 24px; margin-bottom: 5px; }
+    .ejercicio-card .ej-name { font-size: 12px; font-weight: 700; color: var(--negro); }
+    .ejercicio-card .ej-desc { font-size: 10px; color: var(--gris-medio); margin-top: 2px; line-height: 1.3; }
+
+    /* SUBMIT AREA */
+    .submit-area {
+      background: var(--blanco);
+      border: 1px solid var(--borde);
+      padding: 28px 24px;
+      text-align: center;
+      margin-top: 24px;
+    }
+    .submit-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--negro);
+      margin-bottom: 8px;
+    }
+    .submit-sub {
+      font-size: 13px;
+      color: var(--gris-medio);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .btn-submit {
+      background: var(--naranja);
+      color: var(--blanco);
+      border: none;
+      padding: 16px 40px;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-family: inherit;
+      width: 100%;
+      max-width: 420px;
+    }
+    .btn-submit:hover { background: var(--naranja-light); }
+    .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+
+    /* LOADING */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .loading-overlay.active { display: flex; }
+    .loading-spinner {
+      width: 50px; height: 50px;
+      border: 4px solid rgba(255,255,255,0.3);
+      border-top: 4px solid var(--naranja);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .loading-text { color: var(--blanco); font-size: 16px; font-weight: 600; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* REPORT */
+    #informe-section { display: none; }
+    .report-card {
+      background: var(--blanco);
+      border: 1px solid var(--borde);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .report-card-header {
+      padding: 14px 20px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .report-rojo .report-card-header { background: #ffebee; color: var(--rojo); border-left: 5px solid var(--rojo); }
+    .report-naranja .report-card-header { background: #fff3e0; color: #e65100; border-left: 5px solid #e65100; }
+    .report-amarillo .report-card-header { background: #fff8e1; color: #f57f17; border-left: 5px solid #f9a825; }
+    .report-verde .report-card-header { background: #e8f5e9; color: var(--verde); border-left: 5px solid var(--verde); }
+    .report-azul .report-card-header { background: #e3f2fd; color: var(--azul); border-left: 5px solid var(--azul); }
+    .report-card-body {
+      padding: 16px 20px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--gris-oscuro);
+      white-space: pre-wrap;
+    }
+
+    .report-header {
+      background: var(--negro);
+      color: var(--blanco);
+      padding: 24px;
+      margin-bottom: 16px;
+      border-left: 6px solid var(--naranja);
+    }
+    .report-header h2 {
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+    .report-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.55);
+    }
+
+    /* MENU SEMANAL */
+    .menu-card {
+      background: var(--blanco);
+      border: 1px solid var(--borde);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .menu-header {
+      background: var(--negro);
+      color: var(--blanco);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-left: 5px solid var(--naranja);
+    }
+    .menu-header h3 { font-size: 15px; font-weight: 800; }
+    .menu-body { padding: 16px 20px; font-size: 13px; line-height: 1.8; color: var(--gris-oscuro); white-space: pre-wrap; }
+
+    /* PDF BUTTON */
+    .btn-pdf {
+      background: var(--negro);
+      color: var(--blanco);
+      border: none;
+      padding: 14px 32px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    .btn-pdf:hover { background: var(--gris-oscuro); }
+
+    .footer {
+      text-align: center;
+      padding: 32px 20px;
+      font-size: 12px;
+      color: var(--gris-medio);
+      line-height: 1.7;
+      border-top: 1px solid var(--borde);
+      margin-top: 32px;
+    }
+    .footer a { color: var(--naranja); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .fields-row, .fields-row-3 { grid-template-columns: 1fr; }
+      .check-grid, .check-grid-3 { grid-template-columns: 1fr; }
+      .fase-grid { grid-template-columns: 1fr; }
+      .ejercicio-grid { grid-template-columns: repeat(2, 1fr); }
+      .radio-group { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-text">
+      <div class="header-brand">PSNF · Paola Sánchez Nutrición y Farmacia</div>
+      <div class="header-title">Tu menopausia merece <em>atención a medida</em></div>
+      <div class="header-sub">@paola_nutricion_farmacia · Instagram</div>
+    </div>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Generando tu informe personalizado…</div>
+</div>
+
+<div class="container">
+
+  <!-- INTRO -->
+  <div class="intro-card">
+    <div class="icon">🌸</div>
+    <p>Completa el cuestionario y recibe un <strong>informe personalizado</strong> con alertas sobre tu situación, recomendaciones de suplementación y, si completas todo el formulario, un <strong>plan de menú semanal</strong> adaptado a tu etapa y síntomas.<br><br>
+    <strong>Bloques básicos →</strong> Informe + alertas &nbsp;|&nbsp; <strong>Formulario completo →</strong> Informe + menú semanal</p>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-top">
+      <span>Progreso</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <form id="test-form">
+
+    <!-- BLOQUE 1: DATOS GENERALES -->
+    <div class="block" id="bloque-1">
+      <div class="block-header" onclick="toggleBlock('bloque-1')">
+        <div class="block-number">1</div>
+        <div class="block-title">Datos generales</div>
+        <span class="block-badge badge-required">Básico</span>
+        <span class="block-arrow" id="arrow-bloque-1">▼</span>
+      </div>
+      <div class="block-body open" id="body-bloque-1">
+        <div class="fields-row">
+          <div class="field-group">
+            <label class="field-label">Edad</label>
+            <input type="number" id="edad" min="35" max="80" placeholder="ej. 50">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Peso (kg)</label>
+            <input type="number" id="peso" min="40" max="150" placeholder="ej. 65">
+          </div>
+        </div>
+        <div class="fields-row">
+          <div class="field-group">
+            <label class="field-label">Altura (cm)</label>
+            <input type="number" id="altura" min="140" max="195" placeholder="ej. 163">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Perímetro cintura (cm) <span class="optional">· opcional</span></label>
+            <div style="font-size:12px;color:var(--gris-medio);margin-bottom:6px;line-height:1.5;">📏 <strong>Cómo medirte:</strong> De pie, espira el aire, mide a la altura del ombligo con una cinta métrica sin apretar.</div>
+            <input type="number" id="cintura" min="50" max="140" placeholder="ej. 82">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">¿En qué etapa te encuentras?</label>
+          <div class="fase-grid">
+            <div class="fase-card" onclick="selectFase(this, 'perimenopausia')">
+              <input type="radio" name="fase" value="perimenopausia">
+              <div class="fase-icon">🌒</div>
+              <div class="fase-name">Perimenopausia</div>
+              <div class="fase-desc">Ciclos irregulares, primeros síntomas (40-50 años)</div>
+            </div>
+            <div class="fase-card" onclick="selectFase(this, 'menopausia')">
+              <input type="radio" name="fase" value="menopausia">
+              <div class="fase-icon">🌕</div>
+              <div class="fase-name">Menopausia</div>
+              <div class="fase-desc">+12 meses sin menstruación</div>
+            </div>
+            <div class="fase-card" onclick="selectFase(this, 'postmenopausia')">
+              <input type="radio" name="fase" value="postmenopausia">
+              <div class="fase-icon">🌟</div>
+              <div class="fase-name">Postmenopausia</div>
+              <div class="fase-desc">Más de 2 años desde la última regla</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fields-row">
+          <div class="field-group">
+            <label class="field-label">Fecha aproximada última regla <span class="optional">· opcional</span></label>
+            <input type="date" id="ultima-regla">
+          </div>
+          <div class="field-group">
+            <label class="field-label">¿Terapia hormonal sustitutiva (THS)?</label>
+            <select id="ths">
+              <option value="">Selecciona...</option>
+              <option value="no">No tomo THS</option>
+              <option value="si-oral">Sí · oral (pastillas)</option>
+              <option value="si-parche">Sí · parche transdérmico</option>
+              <option value="si-gel">Sí · gel transdérmico</option>
+              <option value="si-vaginal">Sí · uso vaginal local</option>
+              <option value="valorando">Lo estoy valorando con mi médico</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Situación especial <span class="optional">· marcar si aplica</span></label>
+          <div class="check-grid">
+            <div class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="especial" value="menopausia-quirurgica"> <label>Menopausia quirúrgica (extirpación ovarios)</label>
+            </div>
+            <div class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="especial" value="menopausia-precoz"> <label>Menopausia precoz (antes de los 45)</label>
+            </div>
+            <div class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="especial" value="cancer-hormonal"> <label>Antecedente cáncer hormonodependiente</label>
+            </div>
+            <div class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="especial" value="hipotiroidismo"> <label>Hipotiroidismo / Hashimoto</label>
+            </div>
+            <div class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="especial" value="diabetes"> <label>Diabetes / prediabetes</label>
+            </div>
+            <div class="check-item" onclick="toggleCheck(this)">
+              <input type="checkbox" name="especial" value="osteoporosis"> <label>Osteopenia u osteoporosis</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOQUE 2: SÍNTOMAS -->
+    <div class="block" id="bloque-2">
+      <div class="block-header" onclick="toggleBlock('bloque-2')">
+        <div class="block-number">2</div>
+        <div class="block-title">Síntomas actuales</div>
+        <span class="block-badge badge-required">Básico</span>
+        <span class="block-arrow" id="arrow-bloque-2">▼</span>
+      </div>
+      <div class="block-body open" id="body-bloque-2">
+        <div class="block-alert">
+          ⚡ <strong>Cuanto más detallada sea tu respuesta, más precisas serán las recomendaciones.</strong> Marca todo lo que estés experimentando, aunque sea de forma leve u ocasional.
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Sofocos y temperatura</label>
+          <div class="check-grid">
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="sofocos-dia"> <label>Sofocos durante el día</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="sofocos-noche"> <label>Sofocos nocturnos / sudoración</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="calor-intenso"> <label>Sensación de calor intenso constante</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="frio-repentino"> <label>Escalofríos o frío repentino</label></div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Sueño y energía</label>
+          <div class="check-grid">
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="insomnio"> <label>Dificultad para conciliar el sueño</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="despertares"> <label>Despertares nocturnos frecuentes</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="cansancio"> <label>Cansancio y fatiga durante el día</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="energia-baja"> <label>Falta de energía / motivación</label></div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Estado de ánimo y mente</label>
+          <div class="check-grid">
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="ansiedad"> <label>Ansiedad o nerviosismo</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="irritabilidad"> <label>Irritabilidad / cambios de humor</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="tristeza"> <label>Tristeza o bajón anímico</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="niebla-mental"> <label>Niebla mental / falta de concentración</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="memoria"> <label>Fallos de memoria</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="depresion"> <label>Síntomas depresivos</label></div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Peso y metabolismo</label>
+          <div class="check-grid">
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="peso-abdominal"> <label>Aumento de grasa abdominal</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="dificultad-perder-peso"> <label>Dificultad para perder peso</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="retencion"> <label>Retención de líquidos / hinchazón</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="antojos"> <label>Antojos de dulce / carbohidratos</label></div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Piel, cabello y uñas</label>
+          <div class="check-grid">
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="piel-seca"> <label>Piel seca o apagada</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="caida-cabello"> <label>Caída o debilitamiento del cabello</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="unas-debiles"> <label>Uñas débiles o frágiles</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="sequedad-ocular"> <label>Sequedad ocular</label></div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Zona íntima y sexualidad</label>
+          <div class="check-grid">
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="sequedad-vaginal"> <label>Sequedad vaginal</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="relaciones-dolorosas"> <label>Relaciones sexuales dolorosas</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="perdida-libido"> <label>Pérdida de libido</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="incontinencia"> <label>Escapes de orina / incontinencia</label></div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Articulaciones y músculos</label>
+          <div class="check-grid">
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="dolor-articular"> <label>Dolor articular (rodillas, caderas, manos)</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="rigidez"> <label>Rigidez matutina</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="perdida-fuerza"> <label>Pérdida de fuerza muscular</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="sintomas" value="calambres"> <label>Calambres nocturnos</label></div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Intensidad de los sofocos <span class="optional">· si los tienes</span></label>
+          <div class="radio-group">
+            <div class="radio-item" onclick="selectRadio(this, 'intensidad-sofoco')"><input type="radio" name="intensidad-sofoco" value="leve"> <label>Leves (1-3/día)</label></div>
+            <div class="radio-item" onclick="selectRadio(this, 'intensidad-sofoco')"><input type="radio" name="intensidad-sofoco" value="moderados"> <label>Moderados (4-8/día)</label></div>
+            <div class="radio-item" onclick="selectRadio(this, 'intensidad-sofoco')"><input type="radio" name="intensidad-sofoco" value="intensos"> <label>Intensos (+8/día o muy perturbadores)</label></div>
+            <div class="radio-item" onclick="selectRadio(this, 'intensidad-sofoco')"><input type="radio" name="intensidad-sofoco" value="no-tengo"> <label>No tengo sofocos</label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOQUE 3: MEDICACIÓN -->
+    <div class="block" id="bloque-3">
+      <div class="block-header" onclick="toggleBlock('bloque-3')">
+        <div class="block-number">3</div>
+        <div class="block-title">Medicación actual</div>
+        <span class="block-badge badge-required">Básico</span>
+        <span class="block-arrow" id="arrow-bloque-3">▼</span>
+      </div>
+      <div class="block-body open" id="body-bloque-3">
+        <div class="block-alert">
+          ⚠️ <strong>Sección clave:</strong> Algunos medicamentos pueden interactuar con suplementos o fitoestrógenos. Tu respuesta aquí nos permite hacer alertas precisas.
+        </div>
+        <div class="field-group">
+          <label class="field-label">Marca todo lo que tomas actualmente</label>
+          <div class="check-grid">
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="medicacion" value="antidepresivos"> <label>Antidepresivos / ansiolíticos</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="medicacion" value="benzodiacepinas"> <label>Benzodiacepinas / hipnóticos</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="medicacion" value="anticoagulantes"> <label>Anticoagulantes (sintrom, heparina…)</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="medicacion" value="antihipertensivos"> <label>Antihipertensivos</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="medicacion" value="estatinas"> <label>Estatinas (colesterol)</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="medicacion" value="metformina"> <label>Metformina (diabetes)</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="medicacion" value="glp1"> <label>GLP-1 (semaglutida, tirzepatida…)</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="medicacion" value="levotiroxina"> <label>Levotiroxina (hipotiroidismo)</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="medicacion" value="ibp"> <label>IBPs (omeprazol, pantoprazol…)</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="medicacion" value="corticoides"> <label>Corticoides</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="medicacion" value="tamoxifeno"> <label>Tamoxifeno / inhibidores aromatasa</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="medicacion" value="ninguna"> <label>No tomo ningún medicamento</label></div>
+          </div>
+        </div>
+        <div class="field-group" style="margin-top:12px;">
+          <label class="field-label">Otros medicamentos <span class="optional">· escribe aquí si tomas algo que no aparece arriba</span></label>
+          <input type="text" id="medicacion-otros" placeholder="ej. antihistamínicos, bifosfonatos, antiepilépticos…" style="width:100%; padding:10px 14px; border:1.5px solid var(--borde); font-size:14px; font-family:inherit; margin-top:6px;">
+        </div>
+      </div>
+    </div>
+
+    <div class="block" id="bloque-4">
+      <div class="block-header" onclick="toggleBlock('bloque-4')">
+        <div class="block-number">4</div>
+        <div class="block-title">Suplementación actual</div>
+        <span class="block-badge badge-required">Básico</span>
+        <span class="block-arrow" id="arrow-bloque-4">▼</span>
+      </div>
+      <div class="block-body open" id="body-bloque-4">
+        <div class="check-grid">
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="suplementos" value="isoflavonas"> <label>Isoflavonas de soja</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="suplementos" value="cimicifuga"> <label>Cimicífuga (Black Cohosh)</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="suplementos" value="vitamina-d"> <label>Vitamina D</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="suplementos" value="calcio"> <label>Calcio</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="suplementos" value="magnesio"> <label>Magnesio</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="suplementos" value="omega3"> <label>Omega-3</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="suplementos" value="colageno"> <label>Colágeno</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="suplementos" value="proteina"> <label>Proteína en polvo</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="suplementos" value="creatina"> <label>Creatina</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="suplementos" value="melatonina"> <label>Melatonina</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="suplementos" value="hierro"> <label>Hierro</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="suplementos" value="b12"> <label>Vitamina B12</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="suplementos" value="zinc"> <label>Zinc</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="suplementos" value="ashwagandha"> <label>Ashwagandha / adaptógenos</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="suplementos" value="curcuma"> <label>Cúrcuma</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="suplementos" value="ninguno"> <label>No tomo suplementos</label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOQUE 5: ANALÍTICA -->
+    <div class="block" id="bloque-5">
+      <div class="block-header" onclick="toggleBlock('bloque-5')">
+        <div class="block-number">5</div>
+        <div class="block-title">Analítica reciente</div>
+        <span class="block-badge badge-optional">Opcional</span>
+        <span class="block-arrow" id="arrow-bloque-5">▼</span>
+      </div>
+      <div class="block-body" id="body-bloque-5">
+        <p style="font-size:13px; color: var(--gris-medio); margin-bottom: 16px; line-height:1.6;">Introduce los valores si los tienes disponibles. Cuantos más aportes, más específicas serán las recomendaciones.</p>
+        <div class="fields-row-3">
+          <div class="field-group"><label class="field-label">FSH (mUI/mL)</label><input type="number" id="fsh" step="0.1" placeholder="ej. 45"></div>
+          <div class="field-group"><label class="field-label">Estradiol (pg/mL)</label><input type="text" id="estradiol" placeholder="ej. 15 o &lt;20"></div>
+          <div class="field-group"><label class="field-label">TSH (mUI/L)</label><input type="number" id="tsh" step="0.01" placeholder="ej. 2.1"></div>
+        </div>
+        <div class="fields-row-3">
+          <div class="field-group"><label class="field-label">Vitamina D (ng/mL)</label><input type="number" id="vitamina-d-val" step="0.1" placeholder="ej. 28"></div>
+          <div class="field-group"><label class="field-label">Ferritina (ng/mL)</label><input type="number" id="ferritina" step="0.1" placeholder="ej. 22"></div>
+          <div class="field-group"><label class="field-label">B12 (pg/mL)</label><input type="number" id="b12-val" step="1" placeholder="ej. 310"></div>
+        </div>
+        <div class="fields-row-3">
+          <div class="field-group"><label class="field-label">Glucosa (mg/dL)</label><input type="number" id="glucosa" step="1" placeholder="ej. 98"></div>
+          <div class="field-group"><label class="field-label">Colesterol total (mg/dL)</label><input type="number" id="colesterol" step="1" placeholder="ej. 220"></div>
+          <div class="field-group"><label class="field-label">HDL (mg/dL)</label><input type="number" id="hdl" step="1" placeholder="ej. 55"></div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Densitometría ósea (T-score) <span class="optional">si la tienes</span></label>
+          <div class="radio-group">
+            <div class="radio-item" onclick="selectRadio(this,'densito')"><input type="radio" name="densito" value="normal"> <label>Normal (T &gt; -1)</label></div>
+            <div class="radio-item" onclick="selectRadio(this,'densito')"><input type="radio" name="densito" value="osteopenia"> <label>Osteopenia (-1 a -2.5)</label></div>
+            <div class="radio-item" onclick="selectRadio(this,'densito')"><input type="radio" name="densito" value="osteoporosis"> <label>Osteoporosis (T &lt; -2.5)</label></div>
+            <div class="radio-item" onclick="selectRadio(this,'densito')"><input type="radio" name="densito" value="no-hecha"> <label>No me la han hecho</label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOQUE 6: ALIMENTACIÓN -->
+    <div class="block" id="bloque-6">
+      <div class="block-header" onclick="toggleBlock('bloque-6')">
+        <div class="block-number">6</div>
+        <div class="block-title">Alimentación</div>
+        <span class="block-badge badge-optional">Opcional</span>
+        <span class="block-arrow" id="arrow-bloque-6">▼</span>
+      </div>
+      <div class="block-body" id="body-bloque-6">
+        <div class="field-group">
+          <label class="field-label">¿Cómo describirías tu dieta habitual?</label>
+          <div class="radio-group">
+            <div class="radio-item" onclick="selectRadio(this,'patron-dieta')"><input type="radio" name="patron-dieta" value="mediterranea"> <label>Mediterránea</label></div>
+            <div class="radio-item" onclick="selectRadio(this,'patron-dieta')"><input type="radio" name="patron-dieta" value="equilibrada"> <label>Equilibrada</label></div>
+            <div class="radio-item" onclick="selectRadio(this,'patron-dieta')"><input type="radio" name="patron-dieta" value="restriccion"> <label>Restricción calórica</label></div>
+            <div class="radio-item" onclick="selectRadio(this,'patron-dieta')"><input type="radio" name="patron-dieta" value="vegetariana"> <label>Vegetariana / vegana</label></div>
+            <div class="radio-item" onclick="selectRadio(this,'patron-dieta')"><input type="radio" name="patron-dieta" value="sin-orden"> <label>Sin orden definido</label></div>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Marca lo que aplica a tu alimentación diaria</label>
+          <div class="check-grid">
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="alimentacion" value="proteina-baja"> <label>Consumo bajo de proteína (carne, huevos, legumbres)</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="alimentacion" value="lacteos-bajos"> <label>Poco o nada de lácteos</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="alimentacion" value="soja-frecuente"> <label>Soja y derivados frecuente (tofu, edamame…)</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="alimentacion" value="ultraprocesados"> <label>Consumo frecuente de ultraprocesados</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="alimentacion" value="alcohol"> <label>Consumo regular de alcohol</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="alimentacion" value="azucar"> <label>Alto consumo de azúcar / dulces</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="alimentacion" value="cafe-mucho"> <label>Más de 3 cafés al día</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="alimentacion" value="picante"> <label>Picante frecuente</label></div>
+          </div>
+        </div>
+        <div class="field-group" style="margin-top:8px;">
+          <label class="field-label">Intolerancias y alergias alimentarias <span class="optional">· marca las que apliquen</span></label>
+          <div class="check-grid">
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="intolerancias" value="lactosa"> <label>Intolerancia a la lactosa</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="intolerancias" value="gluten"> <label>Intolerancia al gluten / celiaquía</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="intolerancias" value="frutos-secos"> <label>Alergia a frutos secos</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="intolerancias" value="marisco"> <label>Alergia al marisco</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="intolerancias" value="huevo"> <label>Alergia al huevo</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="intolerancias" value="pescado"> <label>Alergia al pescado</label></div>
+            <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="intolerancias" value="vegetariana"> <label>Vegetariana / vegana</label></div>
+          </div>
+          <input type="text" id="intolerancias-otras" placeholder="Otras intolerancias o alergias…" style="width:100%; margin-top:10px; padding:10px 14px; border:1.5px solid var(--borde); font-size:14px; font-family:inherit;">
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOQUE 7: EJERCICIO -->
+    <div class="block" id="bloque-7">
+      <div class="block-header" onclick="toggleBlock('bloque-7')">
+        <div class="block-number">7</div>
+        <div class="block-title">Ejercicio físico</div>
+        <span class="block-badge badge-optional">Opcional</span>
+        <span class="block-arrow" id="arrow-bloque-7">▼</span>
+      </div>
+      <div class="block-body" id="body-bloque-7">
+        <div class="field-group">
+          <label class="field-label">¿Qué tipo de ejercicio practicas? <span class="optional">· puedes marcar varios</span></label>
+          <div class="ejercicio-grid">
+            <div class="ejercicio-card" onclick="toggleEjercicio(this)">
+              <input type="checkbox" name="ejercicio" value="caminar">
+              <div class="ej-icon">🚶‍♀️</div>
+              <div class="ej-name">Caminar</div>
+              <div class="ej-desc">Paseos diarios o rápidos</div>
+            </div>
+            <div class="ejercicio-card" onclick="toggleEjercicio(this)">
+              <input type="checkbox" name="ejercicio" value="fuerza">
+              <div class="ej-icon">🏋️‍♀️</div>
+              <div class="ej-name">Fuerza</div>
+              <div class="ej-desc">Pesas, gym, musculación</div>
+            </div>
+            <div class="ejercicio-card" onclick="toggleEjercicio(this)">
+              <input type="checkbox" name="ejercicio" value="pilates">
+              <div class="ej-icon">🧘‍♀️</div>
+              <div class="ej-name">Pilates</div>
+              <div class="ej-desc">Suelo o máquina</div>
+            </div>
+            <div class="ejercicio-card" onclick="toggleEjercicio(this)">
+              <input type="checkbox" name="ejercicio" value="yoga">
+              <div class="ej-icon">🪷</div>
+              <div class="ej-name">Yoga</div>
+              <div class="ej-desc">Hatha, vinyasa, yin…</div>
+            </div>
+            <div class="ejercicio-card" onclick="toggleEjercicio(this)">
+              <input type="checkbox" name="ejercicio" value="hiit">
+              <div class="ej-icon">⚡</div>
+              <div class="ej-name">HIIT</div>
+              <div class="ej-desc">Alta intensidad por intervalos</div>
+            </div>
+            <div class="ejercicio-card" onclick="toggleEjercicio(this)">
+              <input type="checkbox" name="ejercicio" value="cardio">
+              <div class="ej-icon">🏃‍♀️</div>
+              <div class="ej-name">Cardio</div>
+              <div class="ej-desc">Correr, bici, natación</div>
+            </div>
+            <div class="ejercicio-card" onclick="toggleEjercicio(this)">
+              <input type="checkbox" name="ejercicio" value="bailar">
+              <div class="ej-icon">💃</div>
+              <div class="ej-name">Bailar</div>
+              <div class="ej-desc">Zumba, baile, flamenco</div>
+            </div>
+            <div class="ejercicio-card" onclick="toggleEjercicio(this)">
+              <input type="checkbox" name="ejercicio" value="natacion">
+              <div class="ej-icon">🏊‍♀️</div>
+              <div class="ej-name">Natación</div>
+              <div class="ej-desc">Piscina o aquagym</div>
+            </div>
+            <div class="ejercicio-card" onclick="toggleEjercicio(this)">
+              <input type="checkbox" name="ejercicio" value="sedentaria">
+              <div class="ej-icon">🛋️</div>
+              <div class="ej-name">Sin ejercicio</div>
+              <div class="ej-desc">Vida sedentaria</div>
+            </div>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Frecuencia semanal de ejercicio</label>
+          <div class="radio-group">
+            <div class="radio-item" onclick="selectRadio(this,'frecuencia-ej')"><input type="radio" name="frecuencia-ej" value="nada"> <label>No hago ejercicio</label></div>
+            <div class="radio-item" onclick="selectRadio(this,'frecuencia-ej')"><input type="radio" name="frecuencia-ej" value="1-2"> <label>1-2 días/semana</label></div>
+            <div class="radio-item" onclick="selectRadio(this,'frecuencia-ej')"><input type="radio" name="frecuencia-ej" value="3-4"> <label>3-4 días/semana</label></div>
+            <div class="radio-item" onclick="selectRadio(this,'frecuencia-ej')"><input type="radio" name="frecuencia-ej" value="5-mas"> <label>5 o más días/semana</label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOQUE 8: ESTILO DE VIDA -->
+    <div class="block" id="bloque-8">
+      <div class="block-header" onclick="toggleBlock('bloque-8')">
+        <div class="block-number">8</div>
+        <div class="block-title">Estilo de vida y estrés</div>
+        <span class="block-badge badge-optional">Opcional</span>
+        <span class="block-arrow" id="arrow-bloque-8">▼</span>
+      </div>
+      <div class="block-body" id="body-bloque-8">
+        <div class="check-grid">
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="estilo" value="estres-alto"> <label>Nivel de estrés alto o crónico</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="estilo" value="sueno-mal"> <label>Duerme menos de 6-7 horas</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="estilo" value="fumadora"> <label>Fumadora</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="estilo" value="trabajo-nocturno"> <label>Trabajo nocturno o turnos</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="estilo" value="sol-poco"> <label>Poca exposición al sol</label></div>
+          <div class="check-item" onclick="toggleCheck(this)"><input type="checkbox" name="estilo" value="cuidadora"> <label>Rol cuidadora (hijos, padres…)</label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="submit-area">
+      <div class="submit-title">¿Lista para ver tu informe?</div>
+      <div class="submit-sub">Cuantos más bloques hayas completado, más recomendaciones personalizadas recibirás. Si has completado todo el formulario, incluiremos tu plan de menú semanal.</div>
+
+      <div style="background:#fff5f0; border:2px solid #E8521A; padding:18px 22px; margin:20px 0; text-align:left;">
+        <div style="font-size:11px; font-weight:900; letter-spacing:3px; color:#E8521A; text-transform:uppercase; margin-bottom:8px;">🎁 Oferta exclusiva · Hasta el 31 de marzo</div>
+        <div style="font-size:15px; font-weight:800; color:#1a1a1a; margin-bottom:6px;">10% de descuento en tu primer mes de programa de alimentación</div>
+        <div style="font-size:13px; color:#666; line-height:1.6;">Tras recibir tu informe, si decides iniciar un programa personalizado conmigo tendrás un <strong>10% de descuento el primer mes</strong>. Escríbeme por DM en Instagram para más info 💛</div>
+      </div>
+
+      <div style="margin-bottom:18px; text-align:left;">
+        <label style="font-size:13px; font-weight:700; color:#1a1a1a; display:block; margin-bottom:7px;">Tu email <span style="font-weight:400; color:#666;">· opcional, para que podamos contactarte</span></label>
+        <input type="email" id="user-email" placeholder="tu@email.com" style="width:100%; max-width:420px; padding:10px 14px; border:1.5px solid #e0e0e0; font-size:14px; font-family:inherit;">
+      </div>
+
+      <button type="button" class="btn-submit" onclick="generarInforme()">Generar mi informe personalizado →</button>
+    </div>
+
+  </form>
+
+  <!-- INFORME -->
+  <div id="informe-section">
+    <div class="report-header">
+      <h2>🌸 Informe de Menopausia Personalizado</h2>
+      <p>Basado en tus respuestas · Paola Sánchez Nutrición y Farmacia</p>
+    </div>
+    <div id="alertas-criticas"></div>
+    <div id="puntos-importantes"></div>
+    <div id="a-tener-en-cuenta"></div>
+    <div id="recomendaciones-generales"></div>
+    <div id="menu-semanal"></div>
+
+    <div style="text-align:center; margin-top: 24px;">
+      <button class="btn-pdf" onclick="window.print()">⬇ Descargar / Imprimir informe</button>
+    </div>
+
+    <div style="background:#1a1a1a; border-left:5px solid #E8521A; padding:24px 28px; margin-top:24px;">
+      <div style="font-size:11px; font-weight:900; letter-spacing:3px; color:#E8521A; text-transform:uppercase; margin-bottom:10px;">🎁 Oferta exclusiva · Hasta el 31 de marzo</div>
+      <div style="font-size:18px; font-weight:900; color:#fff; margin-bottom:8px;">¿Quieres ir un paso más allá?</div>
+      <div style="font-size:14px; color:rgba(255,255,255,0.65); line-height:1.7; margin-bottom:16px;">Si decides iniciar un <strong style="color:#fff">programa de alimentación personalizado</strong> conmigo, tienes un <strong style="color:#E8521A">10% de descuento el primer mes</strong> por haber hecho el test. Solo hasta el 31 de marzo.</div>
+      <a href="https://instagram.com/paola_nutricion_farmacia" target="_blank" style="display:inline-block; background:#E8521A; color:#fff; padding:12px 28px; font-size:13px; font-weight:900; letter-spacing:1px; text-transform:uppercase; text-decoration:none;">Escríbeme por DM →</a>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <strong>PSNF · Paola Sánchez Nutrición y Farmacia</strong><br>
+  Este informe es orientativo y no sustituye la consulta médica. Consulta siempre con tu médico, ginecólogo o farmacéutico.<br>
+  <a href="https://instagram.com/paola_nutricion_farmacia" target="_blank">@paola_nutricion_farmacia</a> en Instagram
+</div>
+
+<script>
+// =====================
+// UI HELPERS
+// =====================
+function toggleBlock(id) {
+  const body = document.getElementById('body-' + id);
+  const arrow = document.getElementById('arrow-' + id);
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+  updateProgress();
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('selected');
+  const cb = el.querySelector('input[type="checkbox"]');
+  cb.checked = !cb.checked;
+  updateProgress();
+}
+
+function toggleEjercicio(el) {
+  el.classList.toggle('selected');
+  const cb = el.querySelector('input[type="checkbox"]');
+  cb.checked = !cb.checked;
+  updateProgress();
+}
+
+function selectRadio(el, name) {
+  document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+    r.closest('.radio-item, .fase-card') && r.closest('.radio-item, .fase-card').classList.remove('selected');
+  });
+  el.classList.add('selected');
+  el.querySelector('input[type="radio"]').checked = true;
+  updateProgress();
+}
+
+function selectFase(el, val) {
+  document.querySelectorAll('.fase-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  el.querySelector('input[type="radio"]').checked = true;
+  updateProgress();
+}
+
+function updateProgress() {
+  const checks = document.querySelectorAll('input[type="checkbox"]:checked, input[type="radio"]:checked').length;
+  const total = 30;
+  const pct = Math.min(100, Math.round((checks / total) * 100));
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+}
+
+// =====================
+// DATA COLLECTION
+// =====================
+function getData() {
+  const get = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+  const getChecked = name => [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(x => x.value);
+  const getRadio = name => { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : ''; };
+
+  return {
+    email: get('user-email'),
+    edad: get('edad'), peso: get('peso'), altura: get('altura'), cintura: get('cintura'),
+    fase: getRadio('fase'), ths: get('ths'), ultimaRegla: get('ultima-regla'),
+    especial: getChecked('especial'),
+    sintomas: getChecked('sintomas'),
+    intensidadSofoco: getRadio('intensidad-sofoco'),
+    medicacion: getChecked('medicacion'),
+    medicacionOtros: get('medicacion-otros'),
+    suplementos: getChecked('suplementos'),
+    fsh: get('fsh'), estradiol: get('estradiol'), tsh: get('tsh'),
+    vitaminaD: get('vitamina-d-val'), ferritina: get('ferritina'), b12: get('b12-val'),
+    glucosa: get('glucosa'), colesterol: get('colesterol'), hdl: get('hdl'),
+    densito: getRadio('densito'),
+    patronDieta: getRadio('patron-dieta'), alimentacion: getChecked('alimentacion'),
+    intolerancias: getChecked('intolerancias'), intoleranciaOtras: get('intolerancias-otras'),
+    ejercicio: getChecked('ejercicio'), frecuenciaEj: getRadio('frecuencia-ej'),
+    estilo: getChecked('estilo')
+  };
+}
+
+// =====================
+// GOOGLE SHEETS TRACKING
+// =====================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3Wbo_tMggnWK9i50Wz_WiYxwMnO9PtqtH5z2Gv03YDvWaFrPaz2pkTdhZdZzXWpbQgA/exec';
+
+async function registrarEnSheets(d, completado) {
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        hoja: 'Menopausia',
+        email: d.email || '',
+        edad: d.edad || '',
+        fase: d.fase || '',
+        sintomas: d.sintomas.slice(0,5).join(', '),
+        medicacion: d.medicacion.join(', '),
+        ejercicio: d.ejercicio.join(', '),
+        completado: completado ? 'Sí' : 'Básico'
+      })
+    });
+  } catch(e) {
+    console.log('Sheets log error (non-critical):', e);
+  }
+}
+
+// =====================
+// RULES ENGINE - MENOPAUSIA
+// =====================
+function generateAlerts(d) {
+  const alerts = { red: [], orange: [], yellow: [], green: [] };
+
+  const fase = d.fase;
+  const sint = d.sintomas;
+  const med = d.medicacion;
+  const sup = d.suplementos;
+  const especial = d.especial;
+  const ali = d.alimentacion;
+  const estilo = d.estilo;
+  const ths = d.ths;
+  const ejercicio = d.ejercicio;
+
+  const vitD = parseFloat(d.vitaminaD) || null;
+  const ferritina = parseFloat(d.ferritina) || null;
+  const b12 = parseFloat(d.b12) || null;
+  const fsh = parseFloat(d.fsh) || null;
+  // Estradiol puede ser texto como "<20" — extraemos el número
+  const estradiolRaw = d.estradiol ? d.estradiol.replace(/[<>]/g, '').trim() : null;
+  const estradiol = parseFloat(estradiolRaw) || null;
+  const estradiolBajo = d.estradiol && d.estradiol.includes('<');
+  const glucosa = parseFloat(d.glucosa) || null;
+  const colesterol = parseFloat(d.colesterol) || null;
+  const densito = d.densito;
+
+  // ===== ROJAS =====
+  if (especial.includes('cancer-hormonal') && (sup.includes('isoflavonas') || sup.includes('cimicifuga'))) {
+    alerts.red.push({ title: '⛔ Fitoestrógenos con antecedente de cáncer hormonodependiente', text: 'Las isoflavonas y la cimicífuga están contraindicadas si tienes antecedente de cáncer de mama, útero u ovario hormonodependiente. Consulta urgentemente con tu oncólogo antes de continuar.' });
+  }
+  if (med.includes('tamoxifeno') && (sup.includes('isoflavonas') || sup.includes('cimicifuga'))) {
+    alerts.red.push({ title: '⛔ Fitoestrógenos + Tamoxifeno', text: 'Los fitoestrógenos pueden interferir con la acción del tamoxifeno y reducir su eficacia. No tomes isoflavonas ni cimicífuga si estás en tratamiento con tamoxifeno o inhibidores de la aromatasa.' });
+  }
+  if (med.includes('anticoagulantes') && sup.includes('omega3')) {
+    alerts.red.push({ title: '🩸 Omega-3 a dosis altas + anticoagulantes', text: 'El omega-3 en dosis altas (>2g/día) tiene efecto antiagregante y puede potenciar el efecto de anticoagulantes como el sintrom. Consulta con tu médico antes de suplementar.' });
+  }
+  if (especial.includes('menopausia-precoz') && ths === 'no') {
+    alerts.red.push({ title: '⚠️ Menopausia precoz sin THS', text: 'La menopausia precoz sin terapia hormonal sustitutiva aumenta significativamente el riesgo cardiovascular y de osteoporosis. Es muy recomendable consultar con tu ginecólogo la posibilidad de iniciar THS.' });
+  }
+  if (sint.includes('incontinencia') && fase === 'postmenopausia') {
+    alerts.red.push({ title: '🔴 Incontinencia urinaria en postmenopausia', text: 'La incontinencia urinaria en postmenopausia puede requerir tratamiento específico (fisioterapia de suelo pélvico, THS local). No es algo que haya que asumir como normal. Consulta con tu ginecólogo.' });
+  }
+  if (vitD !== null && vitD < 20) {
+    alerts.red.push({ title: `☀️ Déficit severo de Vitamina D (${vitD} ng/mL)`, text: 'Tu vitamina D está en niveles de déficit severo. Esto aumenta el riesgo de osteoporosis, fragilidad ósea y empeora síntomas como el cansancio y el dolor articular. Necesitas suplementación urgente bajo supervisión médica.' });
+  }
+  if (densito === 'osteoporosis') {
+    alerts.red.push({ title: '🦴 Osteoporosis confirmada', text: 'Con osteoporosis confirmada es imprescindible: vitamina D + calcio bien distribuido a lo largo del día, ejercicio de impacto y fuerza, y valorar THS o tratamiento farmacológico con tu médico.' });
+  }
+  if (glucosa !== null && glucosa > 126) {
+    alerts.red.push({ title: `🩸 Glucosa elevada (${glucosa} mg/dL)`, text: 'Tus niveles de glucosa están en rango de posible diabetes. La menopausia aumenta la resistencia a la insulina. Consulta con tu médico para una valoración completa.' });
+  }
+
+  // ===== NARANJAS =====
+  if (sint.includes('sofocos-noche') && estilo.includes('sueno-mal')) {
+    alerts.orange.push({ title: '😴 Sofocos nocturnos + insomnio', text: 'La combinación de sofocos nocturnos e insomnio es muy frecuente y muy debilitante. El magnesio bisglicinato por la noche, mantener el dormitorio fresco (18-20°C) y valorar melatonina pueden ayudar significativamente.' });
+  }
+  if (d.intensidadSofoco === 'intensos') {
+    alerts.orange.push({ title: '🔥 Sofocos intensos (+8/día)', text: 'Con sofocos de esta intensidad, la calidad de vida se ve seriamente afectada. Las opciones más eficaces son: THS (si no hay contraindicaciones), isoflavonas de soja o cimicífuga, y técnicas de manejo del estrés. Valora con tu ginecólogo.' });
+  }
+  if (sint.includes('niebla-mental') && sint.includes('cansancio')) {
+    alerts.orange.push({ title: '🧠 Niebla mental + fatiga', text: 'Esta combinación puede estar relacionada con el descenso estrogénico, pero también con déficit de hierro, B12 o vitamina D. Revisa tu analítica antes de atribuirlo solo a la menopausia.' });
+  }
+  if (especial.includes('osteoporosis') || densito === 'osteopenia') {
+    alerts.orange.push({ title: '🦴 Salud ósea comprometida', text: 'Es fundamental: calcio 1000-1200mg/día distribuido en las comidas (no todo de golpe), vitamina D >40 ng/mL, proteína adecuada y ejercicio de fuerza e impacto. Evita el tabaco y el alcohol.' });
+  }
+  if (med.includes('antidepresivos') && sint.includes('perdida-libido')) {
+    alerts.orange.push({ title: '💊 Antidepresivos + pérdida de libido', text: 'Algunos antidepresivos (especialmente los ISRS) pueden reducir la libido, lo que se suma al efecto de la caída estrogénica. Comenta con tu médico si es posible ajustar el tratamiento.' });
+  }
+  if (fsh !== null && fsh < 25 && fase === 'menopausia') {
+    alerts.orange.push({ title: `📊 FSH baja para tu fase (${fsh} mUI/mL)`, text: 'Tu FSH es baja para estar en menopausia confirmada. Puede indicar que aún hay actividad ovárica residual o que la extracción analítica fue en un momento particular. Consulta con tu ginecólogo.' });
+  }
+  if (estradiolBajo && estradiol !== null && estradiol < 20) {
+    alerts.orange.push({ title: `📊 Estradiol muy bajo (${d.estradiol} pg/mL)`, text: 'Un estradiol por debajo de 20 pg/mL confirma el déficit estrogénico. Si no estás tomando THS y tienes síntomas importantes, es un buen momento para hablar con tu ginecólogo sobre las opciones disponibles.' });
+  }
+  if (!estradiolBajo && estradiol !== null && estradiol > 30 && ths === 'no') {
+    alerts.orange.push({ title: `📊 Estradiol detectable (${estradiol} pg/mL) sin THS`, text: 'Tener estradiol detectable sin THS puede indicar que estás en perimenopausia activa o que hay producción extraovárica (tejido adiposo). Esto es relevante para valorar qué tipo de soporte necesitas.' });
+  }
+  if (d.medicacionOtros && d.medicacionOtros.trim().length > 2) {
+    alerts.yellow.push({ title: `💊 Otros medicamentos: ${d.medicacionOtros}`, text: 'Has indicado medicación adicional que no está en nuestra lista. Te recomendamos consultar con tu farmacéutica o médico si alguno de estos medicamentos puede interactuar con suplementos para la menopausia.' });
+  }
+  if (sint.includes('peso-abdominal') && ali.includes('azucar')) {
+    alerts.orange.push({ title: '⚖️ Grasa abdominal + alto azúcar', text: 'El descenso estrogénico redistribuye la grasa hacia el abdomen y aumenta la resistencia a la insulina. El exceso de azúcar lo empeora. Reducir el azúcar y los ultraprocesados es prioritario en esta etapa.' });
+  }
+  if (med.includes('glp1') && ths !== 'no') {
+    alerts.orange.push({ title: '💉 GLP-1 + THS', text: 'La combinación de GLP-1 con THS puede requerir monitorización más frecuente. El GLP-1 ralentiza el vaciado gástrico y puede alterar la absorción de la THS oral. Comenta con tu médico.' });
+  }
+  if (especial.includes('hipotiroidismo') && sint.includes('cansancio') && sint.includes('peso-abdominal')) {
+    alerts.orange.push({ title: '🦋 Hipotiroidismo + síntomas metabólicos', text: 'El hipotiroidismo y la menopausia comparten muchos síntomas (fatiga, peso, niebla mental). Asegúrate de tener el TSH bien controlado antes de atribuir todo a la menopausia.' });
+  }
+
+  // ===== AMARILLAS =====
+  if (ali.includes('proteina-baja')) {
+    alerts.yellow.push({ title: '🥩 Ingesta proteica insuficiente', text: 'En la menopausia se necesitan 1.2-1.5g de proteína por kg de peso para mantener masa muscular y ósea. Con una ingesta baja se acelera la sarcopenia. Distribuye proteína en todas las comidas principales.' });
+  }
+  if (ali.includes('lacteos-bajos') && !sup.includes('calcio')) {
+    alerts.yellow.push({ title: '🥛 Bajo consumo de lácteos sin suplementar calcio', text: 'Si no tomas lácteos, asegúrate de cubrir el calcio con otras fuentes: sardinas con espina, almendras, brócoli, tofu, bebida de soja enriquecida. O valora un suplemento de calcio.' });
+  }
+  if (ali.includes('alcohol')) {
+    alerts.yellow.push({ title: '🍷 Consumo de alcohol', text: 'El alcohol empeora los sofocos, altera el sueño, aumenta el riesgo de osteoporosis y puede interferir con la THS. Se recomienda reducirlo al mínimo en esta etapa.' });
+  }
+  if (ali.includes('cafe-mucho')) {
+    alerts.yellow.push({ title: '☕ Más de 3 cafés al día', text: 'La cafeína puede desencadenar o empeorar los sofocos en algunas mujeres. También puede interferir con la absorción de calcio. Considera reducirlo o sustituir alguno por descafeinado.' });
+  }
+  if (ali.includes('picante') && sint.includes('sofocos-dia')) {
+    alerts.yellow.push({ title: '🌶️ Picante + sofocos', text: 'Los alimentos picantes son uno de los desencadenantes más frecuentes de sofocos. Prueba a evitarlos durante 2-3 semanas y observa si mejoran.' });
+  }
+  if (ejercicio.includes('sedentaria') || ejercicio.length === 0) {
+    alerts.yellow.push({ title: '🛋️ Sedentarismo en menopausia', text: 'El ejercicio es la intervención no farmacológica más eficaz en menopausia: reduce sofocos, mejora el sueño, protege huesos y músculo, y reduce el riesgo cardiovascular. Empieza con 30 min de caminar al día.' });
+  }
+  if (!ejercicio.includes('fuerza') && !ejercicio.includes('pilates')) {
+    alerts.yellow.push({ title: '🏋️ Añade ejercicio de fuerza', text: 'El ejercicio de fuerza es imprescindible en menopausia para frenar la pérdida de masa muscular y ósea. No hace falta ir al gym: sentadillas, flexiones, bandas elásticas en casa son suficientes para empezar.' });
+  }
+  if (estilo.includes('estres-alto')) {
+    alerts.yellow.push({ title: '🧠 Estrés crónico', text: 'El cortisol elevado empeora los sofocos, el insomnio y el aumento de grasa abdominal. La gestión del estrés no es opcional en esta etapa — yoga, meditación, respiración diafragmática o simplemente pasear al aire libre.' });
+  }
+  if (estilo.includes('fumadora')) {
+    alerts.yellow.push({ title: '🚬 Tabaco en menopausia', text: 'Fumar adelanta la menopausia, empeora los sofocos, acelera la pérdida ósea y aumenta el riesgo cardiovascular. Es el factor modificable con mayor impacto en esta etapa.' });
+  }
+  if (sup.includes('calcio') && !sup.includes('vitamina-d')) {
+    alerts.yellow.push({ title: '🦴 Calcio sin Vitamina D', text: 'El calcio se absorbe mal sin vitamina D adecuada. Si suplementas calcio, asegúrate de tener los niveles de vitamina D por encima de 40 ng/mL.' });
+  }
+  if (ali.includes('soja-frecuente') && med.includes('tamoxifeno')) {
+    alerts.yellow.push({ title: '🫘 Soja frecuente + tamoxifeno', text: 'El consumo elevado de soja puede interferir con la acción del tamoxifeno. Modera el consumo y consulta con tu oncólogo.' });
+  }
+  if (especial.includes('diabetes') && ali.includes('azucar')) {
+    alerts.yellow.push({ title: '🩸 Diabetes/prediabetes + alto consumo de azúcar', text: 'La menopausia aumenta la resistencia a la insulina. Con diabetes o prediabetes, el control del azúcar y los carbohidratos es aún más crítico en esta etapa.' });
+  }
+
+  // ===== VERDES (siempre) =====
+  alerts.green.push({ title: '🌸 Proteína en cada comida', text: 'Incluye una fuente de proteína de calidad en cada comida principal: huevos, legumbres, pescado, carne, lácteos o tofu. Es la base para mantener masa muscular y ósea en la menopausia.' });
+  alerts.green.push({ title: '🦴 Calcio distribuido a lo largo del día', text: 'El calcio se absorbe mejor en dosis pequeñas (máx 500mg a la vez). Distribuye las fuentes de calcio en las diferentes comidas: lácteos, sardinas con espina, almendras, brócoli.' });
+  alerts.green.push({ title: '☀️ Vitamina D y sol', text: '10-15 minutos de exposición solar al día en brazos y cara ayudan a mantener la vitamina D. Si vives en una zona con poco sol o tienes niveles bajos, la suplementación es necesaria.' });
+  if (ejercicio.includes('fuerza')) {
+    alerts.green.push({ title: '💪 ¡Bien por el entrenamiento de fuerza!', text: 'El entrenamiento de fuerza es la mejor inversión para tu salud en la menopausia. Mantén la frecuencia y asegúrate de llegar a la fatiga muscular en cada serie para obtener el máximo beneficio.' });
+  }
+  if (ejercicio.includes('yoga') || ejercicio.includes('pilates')) {
+    alerts.green.push({ title: '🧘 Yoga/Pilates: excelente elección', text: 'El yoga y el pilates mejoran la flexibilidad, el equilibrio y la gestión del estrés — tres aspectos clave en la menopausia. Complementa con algo de fuerza o impacto para proteger los huesos.' });
+  }
+  alerts.green.push({ title: '💛 Recuerda: no estás sola', text: 'La menopausia es una etapa, no una enfermedad. Con los ajustes adecuados en alimentación, ejercicio y suplementación, la mayoría de mujeres experimentan una mejora significativa de los síntomas.' });
+
+  return alerts;
+}
+
+// =====================
+// MENU CON IA
+// =====================
+async function generarMenuIA(d) {
+  const prompt = `Eres Paola Sánchez, farmacéutica y nutricionista especialista en menopausia. Genera un menú semanal completo (lunes a domingo) para una paciente en ${d.fase || 'menopausia'}.
+
+Datos clave:
+- Fase: ${d.fase || 'menopausia'}
+- THS: ${d.ths || 'no indicada'}
+- Síntomas principales: ${d.sintomas.slice(0,5).join(', ') || 'no indicados'}
+- Ejercicio: ${d.ejercicio.join(', ') || 'no indicado'}
+- Patrón alimentario: ${d.patronDieta || 'equilibrado'}
+- Factores alimentarios: ${d.alimentacion.join(', ') || 'no indicados'}
+- Intolerancias/alergias: ${[...d.intolerancias, d.intoleranciaOtras].filter(Boolean).join(', ') || 'ninguna indicada'}
+- Situaciones especiales: ${d.especial.join(', ') || 'ninguna'}
+
+Criterios obligatorios:
+- Proteína 1.2-1.5g/kg en cada comida principal
+- Calcio distribuido: no todo junto, máximo 500mg por toma
+- Antiinflamatorio: omega-3, cúrcuma, vegetales variados y de colores
+- ${d.sintomas.includes('sofocos-dia') || d.sintomas.includes('sofocos-noche') ? 'Evitar desencadenantes de sofocos: picante, alcohol, café excesivo, azúcar' : 'Dieta variada y equilibrada'}
+- ${d.especial.includes('osteoporosis') ? 'Especialmente rica en calcio y vitamina D' : ''}
+- ${d.alimentacion.includes('proteina-baja') ? 'Énfasis especial en aumentar proteína en cada toma' : ''}
+- Desayuno rico en proteína, sin azúcar añadido
+- Incluir alimentos ricos en fitoestrógenos naturales si no hay contraindicación: lino, soja, legumbres
+
+Formato EXACTO (JSON puro, sin markdown, sin texto extra):
+{"menu":[{"dia":"Lunes","desayuno":"...","media_manana":"...","comida":"...","merienda":"...","cena":"..."},{"dia":"Martes","desayuno":"...","media_manana":"...","comida":"...","merienda":"...","cena":"..."},{"dia":"Miércoles","desayuno":"...","media_manana":"...","comida":"...","merienda":"...","cena":"..."},{"dia":"Jueves","desayuno":"...","media_manana":"...","comida":"...","merienda":"...","cena":"..."},{"dia":"Viernes","desayuno":"...","media_manana":"...","comida":"...","merienda":"...","cena":"..."},{"dia":"Sábado","desayuno":"...","media_manana":"...","comida":"...","merienda":"...","cena":"..."},{"dia":"Domingo","desayuno":"...","media_manana":"...","comida":"...","merienda":"...","cena":"..."}],"consejos":["consejo1","consejo2","consejo3"]}`;
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "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",
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true"
+    },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 2500,
+      messages: [{ role: "user", content: prompt }]
+    })
+  });
+
+  const result = await response.json();
+  const text = result.content[0].text;
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+// =====================
+// GENERATE REPORT
+// =====================
+async function generarInforme() {
+  const d = getData();
+
+  if (!d.fase && !d.sintomas.length) {
+    alert('Por favor, completa al menos los bloques básicos (etapa y síntomas) antes de generar el informe.');
+    return;
+  }
+
+  document.getElementById('loading').classList.add('active');
+  document.querySelector('.btn-submit').disabled = true;
+
+  // Registrar en Google Sheets
+  const completado = d.alimentacion.length > 0 && d.ejercicio.length > 0;
+  registrarEnSheets(d, completado);
+
+  try {
+    // Generar alertas con reglas
+    const alerts = generateAlerts(d);
+
+    // Render informe
+    function renderCard(id, cssClass, icon, title, alertList, emptyMsg) {
+      const content = alertList.length === 0
+        ? `<div style="font-size:14px;color:var(--gris-medio);padding:4px 0;">${emptyMsg}</div>`
+        : alertList.map(a => `<div style="margin-bottom:14px;"><strong style="color:var(--negro);display:block;margin-bottom:4px;">${a.title}</strong><span style="font-size:13px;line-height:1.7;color:var(--gris-oscuro);">${a.text}</span></div>`).join('');
+      document.getElementById(id).innerHTML = `<div class="report-card ${cssClass}"><div class="report-card-header">${icon} ${title} <span style="font-size:11px;font-weight:400;opacity:0.7;">(${alertList.length})</span></div><div class="report-card-body">${content}</div></div>`;
+    }
+
+    renderCard('alertas-criticas',      'report-rojo',    '🔴', 'Alertas críticas',         alerts.red,    'Sin alertas críticas con los datos aportados.');
+    renderCard('puntos-importantes',    'report-naranja', '🟠', 'Puntos importantes',        alerts.orange, 'Sin puntos naranjas identificados.');
+    renderCard('a-tener-en-cuenta',     'report-amarillo','🟡', 'A tener en cuenta',         alerts.yellow, 'Sin observaciones amarillas.');
+    renderCard('recomendaciones-generales','report-verde','✅', 'Recomendaciones generales', alerts.green,  '');
+
+    document.getElementById('informe-section').style.display = 'block';
+    document.getElementById('informe-section').scrollIntoView({ behavior: 'smooth' });
+
+    // Menú con IA si tiene suficientes datos
+    if (completado && d.sintomas.length > 0) {
+      document.getElementById('menu-semanal').innerHTML = `
+        <div class="menu-card">
+          <div class="menu-header"><h3>🥗 Tu plan de menú semanal personalizado</h3></div>
+          <div class="menu-body" style="color:rgba(255,255,255,0.5);font-size:14px;">⏳ Generando tu menú personalizado con IA…</div>
+        </div>`;
+
+      try {
+        const menuData = await generarMenuIA(d);
+        const diasHTML = menuData.menu.map(dia => `
+          <div style="margin-bottom:20px;border-left:3px solid var(--naranja);padding-left:16px;">
+            <div style="font-size:13px;font-weight:900;letter-spacing:2px;color:var(--naranja);text-transform:uppercase;margin-bottom:10px;">${dia.dia}</div>
+            <div style="font-size:13px;line-height:1.8;color:var(--gris-oscuro);">
+              <strong>🌅 Desayuno:</strong> ${dia.desayuno}<br>
+              <strong>🍎 Media mañana:</strong> ${dia.media_manana}<br>
+              <strong>🍽️ Comida:</strong> ${dia.comida}<br>
+              <strong>🫐 Merienda:</strong> ${dia.merienda}<br>
+              <strong>🌙 Cena:</strong> ${dia.cena}
+            </div>
+          </div>`).join('');
+
+        const consejosHTML = menuData.consejos ? `
+          <div style="background:#fff5f0;border-left:4px solid var(--naranja);padding:16px 20px;margin-top:16px;">
+            <div style="font-size:11px;font-weight:900;letter-spacing:3px;color:var(--naranja);text-transform:uppercase;margin-bottom:10px;">💡 Consejos clave para tu caso</div>
+            ${menuData.consejos.map(c => `<p style="font-size:13px;margin-bottom:8px;color:var(--gris-oscuro);">• ${c}</p>`).join('')}
+          </div>` : '';
+
+        document.getElementById('menu-semanal').innerHTML = `
+          <div class="menu-card">
+            <div class="menu-header"><h3>🥗 Tu plan de menú semanal personalizado</h3></div>
+            <div class="menu-body">${diasHTML}${consejosHTML}</div>
+          </div>`;
+      } catch(err) {
+        document.getElementById('menu-semanal').innerHTML = `
+          <div class="menu-card">
+            <div class="menu-header"><h3>🥗 Menú semanal</h3></div>
+            <div class="menu-body" style="color:rgba(0,0,0,0.5);font-size:13px;">No se pudo generar el menú en este momento. Inténtalo de nuevo.</div>
+          </div>`;
+      }
+    }
+
+  } catch (err) {
+    alert('Ha ocurrido un error. Por favor, inténtalo de nuevo.');
+    console.error(err);
+  } finally {
+    document.getElementById('loading').classList.remove('active');
+    document.querySelector('.btn-submit').disabled = false;
+  }
+}
+</script>
+
+</body>
+</html>

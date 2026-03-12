@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PSNF · Paola Sánchez Nutrición y Farmacia</title>
+  <meta name="description" content="Tests personalizados de salud femenina. Hipotiroidismo y Menopausia. Informe con IA y menú semanal adaptado a ti.">
+  <style>
+    :root {
+      --naranja: #E8521A;
+      --negro: #1a1a1a;
+      --gris-oscuro: #2d2d2d;
+      --gris-medio: #666;
+      --gris-claro: #f5f5f5;
+      --blanco: #fff;
+      --borde: #e0e0e0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background: var(--negro);
+      color: var(--blanco);
+      min-height: 100vh;
+    }
+
+    /* ---- HEADER ---- */
+    .header {
+      background: var(--negro);
+      border-bottom: 4px solid var(--naranja);
+      padding: 36px 24px 32px;
+      text-align: center;
+      position: relative;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--naranja);
+    }
+    .header-brand {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 5px;
+      color: var(--naranja);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .header-logo {
+      font-size: 52px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      color: var(--blanco);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .header-logo span { color: var(--naranja); }
+    .header-tagline {
+      font-size: 15px;
+      color: rgba(255,255,255,0.45);
+      font-style: italic;
+      margin-bottom: 20px;
+    }
+    .header-handle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(232,82,26,0.12);
+      border: 1px solid rgba(232,82,26,0.3);
+      color: var(--naranja);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 7px 16px;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      transition: background 0.2s;
+    }
+    .header-handle:hover { background: rgba(232,82,26,0.22); }
+
+    /* ---- INTRO ---- */
+    .intro {
+      max-width: 680px;
+      margin: 48px auto 0;
+      padding: 0 24px;
+      text-align: center;
+    }
+    .intro h2 {
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+    .intro h2 em { color: var(--naranja); font-style: normal; }
+    .intro p {
+      font-size: 15px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.75;
+    }
+
+    /* ---- DIVIDER ---- */
+    .divider {
+      max-width: 680px;
+      margin: 40px auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
+    .divider-text {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: rgba(255,255,255,0.25);
+      text-transform: uppercase;
+    }
+
+    /* ---- CARDS GRID ---- */
+    .cards {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .test-card {
+      background: var(--gris-oscuro);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-top: 5px solid var(--naranja);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .test-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--naranja);
+    }
+    .test-card-top {
+      padding: 32px 28px 24px;
+      flex: 1;
+    }
+    .test-card-icon {
+      font-size: 42px;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .test-card-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: var(--naranja);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .test-card-title {
+      font-size: 26px;
+      font-weight: 900;
+      line-height: 1.15;
+      color: var(--blanco);
+      margin-bottom: 12px;
+    }
+    .test-card-desc {
+      font-size: 14px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+    .test-card-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 8px;
+    }
+    .pill {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 4px 10px;
+      border: 1px solid rgba(232,82,26,0.4);
+      color: rgba(255,255,255,0.65);
+    }
+    .test-card-cta {
+      background: var(--naranja);
+      color: var(--blanco);
+      padding: 16px 28px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.2s;
+    }
+    .test-card:hover .test-card-cta { background: #f0632a; }
+
+    /* ---- HOW IT WORKS ---- */
+    .how {
+      background: rgba(255,255,255,0.03);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 56px 24px;
+      text-align: center;
+    }
+    .how-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 5px;
+      color: var(--naranja);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .how h3 {
+      font-size: 24px;
+      font-weight: 900;
+      margin-bottom: 40px;
+    }
+    .how-steps {
+      max-width: 780px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .how-step {
+      text-align: center;
+    }
+    .how-step-num {
+      width: 44px;
+      height: 44px;
+      background: var(--naranja);
+      color: var(--blanco);
+      font-size: 18px;
+      font-weight: 900;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+    }
+    .how-step-icon { font-size: 28px; margin-bottom: 10px; }
+    .how-step h4 { font-size: 14px; font-weight: 800; margin-bottom: 6px; }
+    .how-step p { font-size: 12px; color: rgba(255,255,255,0.45); line-height: 1.6; }
+
+    /* ---- FOOTER ---- */
+    .footer {
+      text-align: center;
+      padding: 36px 20px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.25);
+      line-height: 1.8;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .footer a { color: var(--naranja); text-decoration: none; }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 640px) {
+      .cards { grid-template-columns: 1fr; }
+      .how-steps { grid-template-columns: repeat(2, 1fr); }
+      .header-logo { font-size: 38px; }
+      .intro h2 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-brand">Paola Sánchez · Nutrición & Farmacia</div>
+    <div class="header-logo">PS<span>NF</span></div>
+    <div class="header-tagline">Salud femenina con base científica</div>
+    <a href="https://instagram.com/paola_nutricion_farmacia" target="_blank" class="header-handle">
+      📷 @paola_nutricion_farmacia
+    </a>
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro">
+    <h2>Tests personalizados para tu <em>salud hormonal</em></h2>
+    <p>Completa el cuestionario que corresponde a tu situación y recibe un informe personalizado con alertas clínicas, recomendaciones de suplementación y, si completas todo, un plan de menú semanal adaptado a ti.</p>
+  </div>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-text">Elige tu test</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- CARDS -->
+  <div class="cards">
+
+    <!-- TEST TIROIDES -->
+    <a href="/tiroides" class="test-card">
+      <div class="test-card-top">
+        <span class="test-card-icon">🦋</span>
+        <div class="test-card-label">Test · Hipotiroidismo</div>
+        <div class="test-card-title">Tu tiroides<br>a medida</div>
+        <div class="test-card-desc">
+          Analiza tu medicación, analítica y hábitos para detectar interacciones con la levotiroxina y optimizar tu tratamiento.
+        </div>
+        <div class="test-card-pills">
+          <span class="pill">Levotiroxina</span>
+          <span class="pill">Interacciones</span>
+          <span class="pill">Analítica</span>
+          <span class="pill">Hashimoto</span>
+          <span class="pill">Menú semanal</span>
+        </div>
+      </div>
+      <div class="test-card-cta">
+        <span>Hacer el test</span>
+        <span>→</span>
+      </div>
+    </a>
+
+    <!-- TEST MENOPAUSIA -->
+    <a href="/menopausia" class="test-card">
+      <div class="test-card-top">
+        <span class="test-card-icon">🌸</span>
+        <div class="test-card-label">Test · Menopausia</div>
+        <div class="test-card-title">Tu menopausia<br>a medida</div>
+        <div class="test-card-desc">
+          Evalúa tus síntomas, suplementación y estilo de vida para recibir recomendaciones personalizadas en esta etapa.
+        </div>
+        <div class="test-card-pills">
+          <span class="pill">Sofocos</span>
+          <span class="pill">Suplementación</span>
+          <span class="pill">Ejercicio</span>
+          <span class="pill">THS</span>
+          <span class="pill">Menú semanal</span>
+        </div>
+      </div>
+      <div class="test-card-cta">
+        <span>Hacer el test</span>
+        <span>→</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="how">
+    <div class="how-label">Cómo funciona</div>
+    <h3>Cuatro pasos, informe personalizado</h3>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="how-step-num">1</div>
+        <div class="how-step-icon">📋</div>
+        <h4>Completa el test</h4>
+        <p>Rellena los bloques que apliquen a tu situación. Cuantos más, mejor.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">2</div>
+        <div class="how-step-icon">🤖</div>
+        <h4>IA especializada</h4>
+        <p>Un modelo entrenado analiza tus datos con criterio clínico farmacéutico.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">3</div>
+        <div class="how-step-icon">📊</div>
+        <h4>Informe detallado</h4>
+        <p>Alertas, recomendaciones de suplementación y consejos adaptados a ti.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">4</div>
+        <div class="how-step-icon">🥗</div>
+        <h4>Menú semanal</h4>
+        <p>Si completas todo, recibes un plan de menú adaptado a tu etapa y síntomas.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <strong style="color:rgba(255,255,255,0.4)">PSNF · Paola Sánchez Nutrición y Farmacia</strong><br>
+    Los informes son orientativos y no sustituyen la consulta médica.<br>
+    Consulta siempre con tu médico, ginecólogo o farmacéutico.<br><br>
+    <a href="https://instagram.com/paola_nutricion_farmacia" target="_blank">@paola_nutricion_farmacia</a> en Instagram
+  </div>
+
+</body>
+</html>
